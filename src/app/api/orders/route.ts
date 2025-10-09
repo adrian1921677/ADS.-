@@ -28,14 +28,120 @@ interface OrderData {
   newsletterConsent?: boolean;
 }
 
+interface Order {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  status: string;
+  payload: any;
+}
+
+// In-Memory Storage für Demo-Zwecke
+// In der Produktion würden Sie eine echte Datenbank verwenden
+let orders: Order[] = []
+
 export async function GET() {
-  return NextResponse.json({ message: 'API funktioniert' })
+  try {
+    // Für Demo-Zwecke: Füge ein paar Beispiel-Aufträge hinzu, wenn keine vorhanden sind
+    if (orders.length === 0) {
+      orders = [
+        {
+          id: '1',
+          createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 Tag alt
+          updatedAt: new Date(Date.now() - 86400000).toISOString(),
+          status: 'angenommen',
+          payload: {
+            customer: {
+              name: 'Herr Max Mustermann',
+              email: 'max.mustermann@example.com',
+              phone: '+49 123 456 789',
+              contactMethod: 'email'
+            },
+            vehicle: {
+              type: 'PKW',
+              plate: 'B-AB 1234',
+              make: 'BMW',
+              model: '3er Touring',
+              notes: 'Tiefergelegt'
+            },
+            pickup: {
+              street: 'Musterstraße',
+              houseNumber: '123',
+              postalCode: '10115',
+              city: 'Berlin',
+              date: '2024-01-15',
+              time: '10:00'
+            },
+            delivery: {
+              street: 'Beispielallee',
+              houseNumber: '456',
+              postalCode: '80331',
+              city: 'München',
+              date: '2024-01-16',
+              time: '14:00'
+            },
+            source: 'Demo'
+          }
+        }
+      ]
+    }
+    
+    return NextResponse.json(orders)
+  } catch (error) {
+    console.error('Fehler beim Abrufen der Aufträge:', error)
+    return NextResponse.json({ error: 'Fehler beim Abrufen der Aufträge' }, { status: 500 })
+  }
 }
 
 export async function POST(request: Request) {
   try {
     const orderData: OrderData = await request.json()
     
+    // Auftrag für Dispositionstool erstellen
+    const orderId = Date.now().toString()
+    const order = {
+      id: orderId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: 'neu', // Neuer Auftrag
+      payload: {
+        customer: {
+          name: `${orderData.salutation === 'herr' ? 'Herr' : 'Frau'} ${orderData.name}`,
+          email: orderData.email,
+          phone: orderData.phone,
+          contactMethod: orderData.contactMethod,
+          callWindow: orderData.callWindow
+        },
+        vehicle: {
+          type: orderData.vehicleType,
+          plate: orderData.vehiclePlate,
+          make: orderData.vehicleMakeModel.split(' ')[0] || '',
+          model: orderData.vehicleMakeModel.split(' ').slice(1).join(' ') || '',
+          notes: orderData.vehicleNotes
+        },
+        pickup: {
+          street: orderData.pickupStreet,
+          houseNumber: orderData.pickupHouseNumber,
+          postalCode: orderData.pickupPostalCode,
+          city: orderData.pickupCity,
+          date: orderData.pickupDate,
+          time: orderData.pickupTime
+        },
+        delivery: {
+          street: orderData.deliveryStreet,
+          houseNumber: orderData.deliveryHouseNumber,
+          postalCode: orderData.deliveryPostalCode,
+          city: orderData.deliveryCity,
+          date: orderData.deliveryDate,
+          time: orderData.deliveryTime
+        },
+        message: orderData.message,
+        gdprConsent: orderData.gdprConsent,
+        newsletterConsent: orderData.newsletterConsent,
+        source: 'Kontaktformular'
+      }
+    }
+
     // E-Mail-Inhalt erstellen
     const emailContent = `
 Neue Fahrzeugüberführungsanfrage von ${orderData.name}
@@ -70,23 +176,28 @@ DSGVO: ${orderData.gdprConsent ? 'Zugestimmt' : 'Nicht zugestimmt'}
 Newsletter: ${orderData.newsletterConsent ? 'Zugestimmt' : 'Nicht zugestimmt'}
 
 ---
+Auftrag #${orderId} wurde im Dispositionstool erstellt.
 Gesendet am: ${new Date().toLocaleString('de-DE')}
     `.trim()
 
-    // Hier würde normalerweise ein E-Mail-Service wie SendGrid, Resend oder Nodemailer verwendet werden
-    // Für jetzt simulieren wir eine erfolgreiche E-Mail-Versendung
+    // Auftrag zum Array hinzufügen
+    orders.push(order)
+    
+    // Log für Debugging
+    console.log('Neuer Auftrag erstellt:', JSON.stringify(order, null, 2))
     console.log('E-Mail-Inhalt:', emailContent)
     
     // In der Produktion würden Sie hier den E-Mail-Service aufrufen:
     // await sendEmail({
     //   to: 'info@abdullahu-drive-solutions.de',
-    //   subject: `Neue Fahrzeugüberführungsanfrage von ${orderData.name}`,
+    //   subject: `Neue Fahrzeugüberführungsanfrage von ${orderData.name} - Auftrag #${orderId}`,
     //   text: emailContent
     // })
     
     return NextResponse.json({ 
-      message: 'Anfrage erfolgreich gesendet', 
-      orderId: Date.now().toString() 
+      message: 'Anfrage erfolgreich gesendet und Auftrag erstellt', 
+      orderId: orderId,
+      order: order
     }, { status: 201 })
     
   } catch (error) {
