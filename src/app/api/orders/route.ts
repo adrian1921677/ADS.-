@@ -60,23 +60,34 @@ export async function GET() {
   try {
     let orders: Order[] = []
     
+    console.log('GET /api/orders - Starte Abruf der Aufträge')
+    
     if (redis) {
       // Versuche Redis zu verwenden
       try {
+        console.log('Verwende Redis für Aufträge')
         orders = await redis.get<Order[]>(ORDERS_KEY) || []
+        console.log(`Redis: ${orders.length} Aufträge gefunden`)
       } catch (error) {
         console.log('Redis-Fehler, verwende Fallback:', error)
         orders = fallbackOrders
+        console.log(`Fallback: ${orders.length} Aufträge gefunden`)
       }
     } else {
       // Verwende Fallback
+      console.log('Redis nicht verfügbar, verwende Fallback')
       orders = fallbackOrders
+      console.log(`Fallback: ${orders.length} Aufträge gefunden`)
     }
     
-    // Falls keine Aufträge vorhanden sind, füge einen Demo-Auftrag hinzu
+    // Log alle Aufträge für Debugging
+    console.log('Alle Aufträge:', JSON.stringify(orders, null, 2))
+    
+    // Nur Demo-Auftrag hinzufügen, wenn wirklich keine Aufträge vorhanden sind
     if (orders.length === 0) {
+      console.log('Keine Aufträge vorhanden, füge Demo-Auftrag hinzu')
       const demoOrder: Order = {
-        id: '1',
+        id: 'demo-1',
         createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 Tag alt
         updatedAt: new Date(Date.now() - 86400000).toISOString(),
         status: 'angenommen',
@@ -118,16 +129,19 @@ export async function GET() {
       if (redis) {
         try {
           await redis.set(ORDERS_KEY, [demoOrder])
+          console.log('Demo-Auftrag in Redis gespeichert')
         } catch (error) {
           console.log('Redis-Speicher-Fehler, verwende Fallback:', error)
           fallbackOrders = [demoOrder]
         }
       } else {
         fallbackOrders = [demoOrder]
+        console.log('Demo-Auftrag in Fallback gespeichert')
       }
       return NextResponse.json([demoOrder])
     }
     
+    console.log(`Rückgabe von ${orders.length} Aufträgen`)
     return NextResponse.json(orders)
   } catch (error) {
     console.error('Fehler beim Abrufen der Aufträge:', error)
@@ -137,7 +151,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    console.log('POST /api/orders - Neue Auftragsanfrage erhalten')
     const orderData: OrderData = await request.json()
+    console.log('Auftragsdaten:', JSON.stringify(orderData, null, 2))
     
     // Auftrag für Dispositionstool erstellen
     const orderId = Date.now().toString()
@@ -183,6 +199,8 @@ export async function POST(request: Request) {
         source: 'Kontaktformular'
       }
     }
+    
+    console.log('Erstellter Auftrag:', JSON.stringify(order, null, 2))
 
     // E-Mail-Inhalt erstellen
     const emailContent = `
@@ -225,30 +243,39 @@ Gesendet am: ${new Date().toLocaleString('de-DE')}
     // Lade bestehende Aufträge
     let existingOrders: Order[] = []
     
+    console.log('Lade bestehende Aufträge...')
+    
     if (redis) {
       try {
         existingOrders = await redis.get<Order[]>(ORDERS_KEY) || []
+        console.log(`Redis: ${existingOrders.length} bestehende Aufträge geladen`)
       } catch (error) {
         console.log('Redis-Lade-Fehler, verwende Fallback:', error)
         existingOrders = fallbackOrders
+        console.log(`Fallback: ${existingOrders.length} bestehende Aufträge geladen`)
       }
     } else {
       existingOrders = fallbackOrders
+      console.log(`Fallback: ${existingOrders.length} bestehende Aufträge geladen`)
     }
     
     // Füge neuen Auftrag hinzu
     const updatedOrders = [...existingOrders, order]
+    console.log(`Neue Gesamtanzahl: ${updatedOrders.length} Aufträge`)
     
     // Speichere Aufträge
     if (redis) {
       try {
         await redis.set(ORDERS_KEY, updatedOrders)
+        console.log('Aufträge erfolgreich in Redis gespeichert')
       } catch (error) {
         console.log('Redis-Speicher-Fehler, verwende Fallback:', error)
         fallbackOrders = updatedOrders
+        console.log('Aufträge in Fallback gespeichert')
       }
     } else {
       fallbackOrders = updatedOrders
+      console.log('Aufträge in Fallback gespeichert')
     }
     
     // Log für Debugging
