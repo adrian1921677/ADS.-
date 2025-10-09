@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { kv } from '@vercel/kv'
 
 interface OrderData {
   salutation: string;
@@ -36,54 +37,57 @@ interface Order {
   payload: any;
 }
 
-// In-Memory Storage für Demo-Zwecke
-// In der Produktion würden Sie eine echte Datenbank verwenden
-let orders: Order[] = []
+const ORDERS_KEY = 'orders'
 
 export async function GET() {
   try {
-    // Für Demo-Zwecke: Füge ein paar Beispiel-Aufträge hinzu, wenn keine vorhanden sind
+    // Lade Aufträge aus Vercel KV
+    const orders = await kv.get<Order[]>(ORDERS_KEY) || []
+    
+    // Falls keine Aufträge vorhanden sind, füge einen Demo-Auftrag hinzu
     if (orders.length === 0) {
-      orders = [
-        {
-          id: '1',
-          createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 Tag alt
-          updatedAt: new Date(Date.now() - 86400000).toISOString(),
-          status: 'angenommen',
-          payload: {
-            customer: {
-              name: 'Herr Max Mustermann',
-              email: 'max.mustermann@example.com',
-              phone: '+49 123 456 789',
-              contactMethod: 'email'
-            },
-            vehicle: {
-              type: 'PKW',
-              plate: 'B-AB 1234',
-              make: 'BMW',
-              model: '3er Touring',
-              notes: 'Tiefergelegt'
-            },
-            pickup: {
-              street: 'Musterstraße',
-              houseNumber: '123',
-              postalCode: '10115',
-              city: 'Berlin',
-              date: '2024-01-15',
-              time: '10:00'
-            },
-            delivery: {
-              street: 'Beispielallee',
-              houseNumber: '456',
-              postalCode: '80331',
-              city: 'München',
-              date: '2024-01-16',
-              time: '14:00'
-            },
-            source: 'Demo'
-          }
+      const demoOrder: Order = {
+        id: '1',
+        createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 Tag alt
+        updatedAt: new Date(Date.now() - 86400000).toISOString(),
+        status: 'angenommen',
+        payload: {
+          customer: {
+            name: 'Herr Max Mustermann',
+            email: 'max.mustermann@example.com',
+            phone: '+49 123 456 789',
+            contactMethod: 'email'
+          },
+          vehicle: {
+            type: 'PKW',
+            plate: 'B-AB 1234',
+            make: 'BMW',
+            model: '3er Touring',
+            notes: 'Tiefergelegt'
+          },
+          pickup: {
+            street: 'Musterstraße',
+            houseNumber: '123',
+            postalCode: '10115',
+            city: 'Berlin',
+            date: '2024-01-15',
+            time: '10:00'
+          },
+          delivery: {
+            street: 'Beispielallee',
+            houseNumber: '456',
+            postalCode: '80331',
+            city: 'München',
+            date: '2024-01-16',
+            time: '14:00'
+          },
+          source: 'Demo'
         }
-      ]
+      }
+      
+      // Speichere Demo-Auftrag
+      await kv.set(ORDERS_KEY, [demoOrder])
+      return NextResponse.json([demoOrder])
     }
     
     return NextResponse.json(orders)
@@ -180,8 +184,14 @@ Auftrag #${orderId} wurde im Dispositionstool erstellt.
 Gesendet am: ${new Date().toLocaleString('de-DE')}
     `.trim()
 
-    // Auftrag zum Array hinzufügen
-    orders.push(order)
+    // Lade bestehende Aufträge aus Vercel KV
+    const existingOrders = await kv.get<Order[]>(ORDERS_KEY) || []
+    
+    // Füge neuen Auftrag hinzu
+    const updatedOrders = [...existingOrders, order]
+    
+    // Speichere aktualisierte Aufträge in Vercel KV
+    await kv.set(ORDERS_KEY, updatedOrders)
     
     // Log für Debugging
     console.log('Neuer Auftrag erstellt:', JSON.stringify(order, null, 2))
