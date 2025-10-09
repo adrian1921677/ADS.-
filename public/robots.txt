@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /disposition
+
+Sitemap: https://abdullahu-drive-solutions.de/sitemap.xml

@@ -1,0 +1,561 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Einheitliche Schriftfamilie */
+    --font-heading: 'system-ui', -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    --font-body: 'system-ui', -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+
+    /* Light Mode Farben */
+    --color-primary-600: #0C2A3A;
+    --color-accent-500: #E23D3D;
+    --color-neutral-50: #F2F4F7;
+    --color-background: #ffffff;
+    --color-foreground: #111827;
+    --color-card: #ffffff;
+    --color-card-foreground: #111827;
+    --color-border: #e5e7eb;
+    --color-muted: #6b7280;
+    --color-muted-foreground: #9ca3af;
+  }
+
+
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--color-foreground);
+  }
+}
+
+@layer components {
+  /* Header Nav underline hover/active */
+  .nav-link {
+    position: relative;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 10px;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 200ms ease;
+  }
+  .nav-link:hover::after,
+  .nav-link[aria-current="page"]::after {
+    transform: scaleX(1);
+  }
+
+  /* Process Steps Animation */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Horizontal Scroll Styles */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  /* CTA-Band dunkel + klarer Kontrast */
+  .cta-band {
+    background: linear-gradient(135deg, #0C2A3A 0%, #17384f 100%);
+    color: #fff;
+  }
+  
+  .cta-band .btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #fff;
+  }
+  
+  /* Footer lesbar machen */
+  footer {
+    color: #3D4B59;
+  }
+  
+  footer a {
+    color: #1F2933;
+  }
+  
+  /* Glas-Effekt für Hero USP-Panel */
+  .usp-panel {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: none;
+    backdrop-filter: blur(6px);
+  }
+  
+  /* Harmonische Typografie-Hierarchie */
+  h1 {
+    font-size: clamp(3rem, 6vw, 5rem);
+    line-height: 1.1;
+    font-weight: 700;
+  }
+  
+  h2 {
+    font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+    line-height: 1.2;
+    font-weight: 700;
+  }
+  
+  h3 {
+    font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+    line-height: 1.3;
+    font-weight: 600;
+  }
+  
+  h4 {
+    font-size: clamp(1.5rem, 3vw, 1.875rem);
+    line-height: 1.4;
+    font-weight: 600;
+  }
+  
+  p {
+    font-size: 1.1875rem; /* 19px */
+    line-height: 1.7;
+  }
+  
+  /* Vereinheitlichte Textgrößen */
+  .text-body {
+    font-size: 1.1875rem; /* 19px */
+    line-height: 1.7;
+  }
+  .text-body-sm {
+    font-size: 1rem; /* 16px */
+    line-height: 1.6;
+  }
+  /* Backwards-Compat Aliase */
+  .text-large { font-size: 1.125rem; line-height: 1.7; }
+  .text-small { font-size: 0.95rem; line-height: 1.6; }
+  
+  /* Hero-spezifische Anpassungen */
+  .hero-title {
+    font-size: clamp(3.75rem, 7.5vw, 6.5rem);
+    line-height: 1.05;
+    font-weight: 800;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  }
+
+  /* Handschriftliche Unterstreichung */
+  .handwritten-underline {
+    position: relative;
+    display: inline-block;
+  }
+
+  .handwritten-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: -2px;
+    right: -2px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent 0%, #FFD700 20%, #FFA500 50%, #FFD700 80%, transparent 100%);
+    border-radius: 2px;
+    transform: rotate(-1deg);
+    box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+    animation: handwritten-glow 2s ease-in-out infinite alternate;
+  }
+
+  /* Mobile-spezifische Ausrichtung für A und B */
+  .hero-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-text-line {
+    display: block;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .mobile-ab-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .mobile-ab-container .mobile-nach {
+    font-size: inherit;
+    opacity: 1;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .mobile-ab-container .mobile-a,
+  .mobile-ab-container .mobile-b {
+    display: inline-block;
+    line-height: 1;
+    font-size: inherit;
+    text-align: center;
+  }
+
+  @keyframes handwritten-glow {
+    0% {
+      box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+    }
+    100% {
+      box-shadow: 0 2px 8px rgba(255, 215, 0, 0.6);
+    }
+  }
+  
+  .hero-subtitle {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.3;
+  }
+  
+  .section-title {
+    font-size: clamp(2.75rem, 5.25vw, 4.25rem);
+    line-height: 1.2;
+    font-weight: 700;
+  }
+  
+  /* Abstände vereinheitlichen (8px-Raster) */
+  .section {
+    padding: 64px 0;
+  }
+  
+  .section--tight {
+    padding: 48px 0;
+  }
+  
+  .card {
+    padding: 24px;
+    border-radius: 16px;
+  }
+  
+  /* Buttons konsistent */
+  .btn {
+    padding: 0.9rem 1.2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    min-height: 44px; /* Touch-Ziele */
+  }
+  
+  .btn-primary {
+    background: #E23D3D;
+    color: #fff;
+  }
+  
+  .btn-primary:hover {
+    background: #C43131;
+  }
+  
+  .btn-ghost {
+    background: #fff;
+    border: 1px solid #E5E9F0;
+    color: #0C2A3A;
+  }
+  
+  /* Stepper klarer */
+  .stepper__track {
+    height: 4px;
+    background: #fde4e4;
+  }
+  
+  .stepper__dot {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #E23D3D;
+    background: #fff;
+    border-radius: 999px;
+  }
+  
+  .stepper__card {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* Accessibility */
+  :focus-visible {
+    outline: 3px solid #E23D3D;
+    outline-offset: 2px;
+  }
+  
+  a, button {
+    min-height: 44px; /* Touch-Ziele */
+  }
+  
+  /* Cool Animations & Effects */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes fadeInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  @keyframes gradientShift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  
+  @keyframes carDrive {
+    0% {
+      transform: translateX(-100px);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(calc(100vw + 100px));
+      opacity: 0;
+    }
+  }
+  
+  @keyframes carBounce {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+  
+  /* Animation Classes */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+  
+  .animate-fade-in-left {
+    animation: fadeInLeft 0.8s ease-out forwards;
+  }
+  
+  .animate-fade-in-right {
+    animation: fadeInRight 0.8s ease-out forwards;
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  /* Respect user prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  /* USP Chips */
+  .usp-chip {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 999px;
+    padding: 8px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* TileBurst Overlay */
+  .tileburst-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    pointer-events: none;
+  }
+  .tileburst-grid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+  }
+  .tileburst-cell {
+    background: radial-gradient(1200px 1200px at center, rgba(226,61,61,0.35), rgba(12,42,58,0.0) 70%);
+    opacity: 0;
+    animation: tb-pop 700ms cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  @keyframes tb-pop {
+    0% { opacity: 0; transform: scale(0.2); }
+    40% { opacity: 1; transform: scale(1.06); }
+    100% { opacity: 0; transform: scale(1.4); }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  .animate-gradient {
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+  }
+  
+  .animate-car-drive {
+    animation: carDrive 4s ease-in-out forwards;
+  }
+  
+  .animate-car-bounce {
+    animation: carBounce 0.5s ease-in-out infinite;
+  }
+  
+  /* Hover Effects */
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+  
+  .hover-glow {
+    transition: all 0.3s ease;
+  }
+  
+  .hover-glow:hover {
+    box-shadow: 0 0 30px rgba(226, 61, 61, 0.3);
+  }
+  
+  .hover-scale {
+    transition: transform 0.3s ease;
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Staggered Animations */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+  
+  /* Loading States */
+  .loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  
+  /* Scroll Animations */
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Logo orbit animation */
+  .orbit-ring {
+    width: var(--orbit-size, 56px);
+    height: var(--orbit-size, 56px);
+    border-radius: 999px;
+    border: 2px dashed rgba(12,42,58,0.25);
+    position: relative;
+  }
+  .orbit-car {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(0deg) translateX(calc(var(--orbit-size,56px) / 2));
+    animation: orbit-spin 5s linear infinite;
+  }
+  @keyframes orbit-spin {
+    from { transform: translate(-50%, -50%) rotate(0deg) translateX(calc(var(--orbit-size,56px) / 2)); }
+    to   { transform: translate(-50%, -50%) rotate(360deg) translateX(calc(var(--orbit-size,56px) / 2)); }
+  }
+}
