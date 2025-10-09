@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   // output: 'export', // Deaktiviert für Vercel (Serverless)
-  trailingSlash: true,
+  trailingSlash: false, // Geändert für bessere Vercel-Kompatibilität
   assetPrefix: '',
   basePath: '',
   images: {
