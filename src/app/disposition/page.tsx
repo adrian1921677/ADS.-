@@ -26,6 +26,8 @@ export default function DispositionPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set())
   const [showDatabaseView, setShowDatabaseView] = useState(false)
+  const [showCreateOrder, setShowCreateOrder] = useState(false)
+  const [showCreateInvoice, setShowCreateInvoice] = useState(false)
 
   const CORRECT_PASSWORD = 'ADS'
 
@@ -178,10 +180,10 @@ export default function DispositionPage() {
               <Button variant="outline" onClick={refreshOrders} title="Aktualisieren">
                 <RefreshCcw className="h-4 w-4" />
               </Button>
-              <Button onClick={() => window.open('/kontakt', '_blank')}>
+              <Button onClick={() => setShowCreateOrder(true)}>
                 <Plus className="h-4 w-4 mr-2" />Auftrag erstellen
               </Button>
-              <Button variant="secondary" onClick={() => alert('Rechnungserstellung wird in Kürze verfügbar sein!')}>
+              <Button variant="secondary" onClick={() => setShowCreateInvoice(true)}>
                 <FileText className="h-4 w-4 mr-2" /> Rechnung erstellen
               </Button>
               <Button 
@@ -373,6 +375,51 @@ export default function DispositionPage() {
           )}
         </div>
       </div>
+
+      {/* Auftrag erstellen Modal */}
+      {showCreateOrder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Neuen Auftrag erstellen</h3>
+            <p className="text-gray-600 mb-4">
+              Für die Auftragserstellung verwenden Sie bitte das Kontaktformular. 
+              Dort werden alle notwendigen Daten erfasst und automatisch als Auftrag im System gespeichert.
+            </p>
+            <div className="flex gap-3">
+              <Button onClick={() => window.open('/kontakt', '_blank')} className="flex-1">
+                Zum Kontaktformular
+              </Button>
+              <Button variant="outline" onClick={() => setShowCreateOrder(false)}>
+                Abbrechen
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rechnung erstellen Modal */}
+      {showCreateInvoice && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Rechnung erstellen</h3>
+            <p className="text-gray-600 mb-4">
+              Wählen Sie einen Auftrag aus der Liste aus und klicken Sie auf "Rechnung erstellen" 
+              um eine Rechnung für diesen Auftrag zu generieren.
+            </p>
+            <div className="space-y-3">
+              <div className="p-3 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  <strong>Hinweis:</strong> Die Rechnungserstellung ist noch in Entwicklung. 
+                  Sie können Aufträge bereits verwalten und deren Status ändern.
+                </p>
+              </div>
+              <Button variant="outline" onClick={() => setShowCreateInvoice(false)} className="w-full">
+                Verstanden
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
