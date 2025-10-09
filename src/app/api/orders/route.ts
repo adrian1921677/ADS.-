@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { kv } from '@vercel/kv'
+// import { kv } from '@vercel/kv' // Temporär deaktiviert bis Vercel KV aktiviert ist
 
 interface OrderData {
   salutation: string;
@@ -39,10 +39,14 @@ interface Order {
 
 const ORDERS_KEY = 'orders'
 
+// Temporäre In-Memory-Lösung bis Vercel KV aktiviert ist
+let tempOrders: Order[] = []
+
 export async function GET() {
   try {
-    // Lade Aufträge aus Vercel KV
-    const orders = await kv.get<Order[]>(ORDERS_KEY) || []
+    // Temporäre Lösung: Verwende In-Memory-Speicherung
+    // TODO: Zurück zu Vercel KV wechseln, sobald aktiviert
+    const orders = tempOrders
     
     // Falls keine Aufträge vorhanden sind, füge einen Demo-Auftrag hinzu
     if (orders.length === 0) {
@@ -85,8 +89,8 @@ export async function GET() {
         }
       }
       
-      // Speichere Demo-Auftrag
-      await kv.set(ORDERS_KEY, [demoOrder])
+      // Speichere Demo-Auftrag temporär
+      tempOrders = [demoOrder]
       return NextResponse.json([demoOrder])
     }
     
@@ -184,14 +188,14 @@ Auftrag #${orderId} wurde im Dispositionstool erstellt.
 Gesendet am: ${new Date().toLocaleString('de-DE')}
     `.trim()
 
-    // Lade bestehende Aufträge aus Vercel KV
-    const existingOrders = await kv.get<Order[]>(ORDERS_KEY) || []
+    // Temporäre Lösung: Verwende In-Memory-Speicherung
+    const existingOrders = tempOrders
     
     // Füge neuen Auftrag hinzu
     const updatedOrders = [...existingOrders, order]
     
-    // Speichere aktualisierte Aufträge in Vercel KV
-    await kv.set(ORDERS_KEY, updatedOrders)
+    // Speichere temporär
+    tempOrders = updatedOrders
     
     // Log für Debugging
     console.log('Neuer Auftrag erstellt:', JSON.stringify(order, null, 2))
