@@ -1,22 +1,60 @@
 import { NextResponse } from 'next/server'
-import { Redis } from '@upstash/redis'
 
-// Upstash Redis Client mit Fallback
-let redis: Redis | null = null
+// Persistente Speicherung mit JSONBin.io
+const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY || 'your-api-key-here'
+const JSONBIN_BIN_ID = 'abdullahu-drive-orders'
 
-try {
-  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-    redis = new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+// Fallback: In-Memory-Speicherung (nur für lokale Entwicklung)
+let fallbackOrders: Order[] = []
+
+// Funktion zum Laden von Aufträgen aus JSONBin
+async function loadOrdersFromJSONBin(): Promise<Order[]> {
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+      headers: {
+        'X-Master-Key': JSONBIN_API_KEY,
+        'Content-Type': 'application/json'
+      }
     })
+    
+    if (!response.ok) {
+      console.log('JSONBin nicht verfügbar, verwende Fallback')
+      return fallbackOrders
+    }
+    
+    const data = await response.json()
+    console.log(`JSONBin: ${data.record?.length || 0} Aufträge geladen`)
+    return data.record || []
+  } catch (error) {
+    console.log('JSONBin-Fehler, verwende Fallback:', error)
+    return fallbackOrders
   }
-} catch (error) {
-  console.log('Redis nicht verfügbar, verwende Fallback:', error)
 }
 
-// Fallback: In-Memory-Speicherung
-let fallbackOrders: Order[] = []
+// Funktion zum Speichern von Aufträgen in JSONBin
+async function saveOrdersToJSONBin(orders: Order[]): Promise<boolean> {
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+      method: 'PUT',
+      headers: {
+        'X-Master-Key': JSONBIN_API_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orders)
+    })
+    
+    if (!response.ok) {
+      console.log('JSONBin-Speicher-Fehler, verwende Fallback')
+      return false
+    }
+    
+    console.log('Aufträge erfolgreich in JSONBin gespeichert')
+    return true
+  } catch (error) {
+    console.log('JSONBin-Speicher-Fehler, verwende Fallback:', error)
+    return false
+  }
+}
 
 interface OrderData {
   salutation: string;
@@ -58,29 +96,12 @@ const ORDERS_KEY = 'orders'
 
 export async function GET() {
   try {
-    let orders: Order[] = []
-    
     console.log('GET /api/orders - Starte Abruf der Aufträge')
     
-    if (redis) {
-      // Versuche Redis zu verwenden
-      try {
-        console.log('Verwende Redis für Aufträge')
-        orders = await redis.get<Order[]>(ORDERS_KEY) || []
-        console.log(`Redis: ${orders.length} Aufträge gefunden`)
-      } catch (error) {
-        console.log('Redis-Fehler, verwende Fallback:', error)
-        orders = fallbackOrders
-        console.log(`Fallback: ${orders.length} Aufträge gefunden`)
-      }
-    } else {
-      // Verwende Fallback
-      console.log('Redis nicht verfügbar, verwende Fallback')
-      orders = fallbackOrders
-      console.log(`Fallback: ${orders.length} Aufträge gefunden`)
-    }
+    // Lade Aufträge aus JSONBin (persistent)
+    const orders = await loadOrdersFromJSONBin()
     
-    // Log alle Aufträge für Debugging
+    console.log(`Geladene Aufträge: ${orders.length}`)
     console.log('Alle Aufträge:', JSON.stringify(orders, null, 2))
     
     // Nur Demo-Auftrag hinzufügen, wenn wirklich keine Aufträge vorhanden sind
@@ -125,16 +146,9 @@ export async function GET() {
         }
       }
       
-      // Speichere Demo-Auftrag
-      if (redis) {
-        try {
-          await redis.set(ORDERS_KEY, [demoOrder])
-          console.log('Demo-Auftrag in Redis gespeichert')
-        } catch (error) {
-          console.log('Redis-Speicher-Fehler, verwende Fallback:', error)
-          fallbackOrders = [demoOrder]
-        }
-      } else {
+      // Speichere Demo-Auftrag persistent
+      const saved = await saveOrdersToJSONBin([demoOrder])
+      if (!saved) {
         fallbackOrders = [demoOrder]
         console.log('Demo-Auftrag in Fallback gespeichert')
       }
@@ -240,42 +254,21 @@ Auftrag #${orderId} wurde im Dispositionstool erstellt.
 Gesendet am: ${new Date().toLocaleString('de-DE')}
     `.trim()
 
-    // Lade bestehende Aufträge
-    let existingOrders: Order[] = []
-    
-    console.log('Lade bestehende Aufträge...')
-    
-    if (redis) {
-      try {
-        existingOrders = await redis.get<Order[]>(ORDERS_KEY) || []
-        console.log(`Redis: ${existingOrders.length} bestehende Aufträge geladen`)
-      } catch (error) {
-        console.log('Redis-Lade-Fehler, verwende Fallback:', error)
-        existingOrders = fallbackOrders
-        console.log(`Fallback: ${existingOrders.length} bestehende Aufträge geladen`)
-      }
-    } else {
-      existingOrders = fallbackOrders
-      console.log(`Fallback: ${existingOrders.length} bestehende Aufträge geladen`)
-    }
+    // Lade bestehende Aufträge aus JSONBin (persistent)
+    console.log('Lade bestehende Aufträge aus JSONBin...')
+    const existingOrders = await loadOrdersFromJSONBin()
+    console.log(`${existingOrders.length} bestehende Aufträge geladen`)
     
     // Füge neuen Auftrag hinzu
     const updatedOrders = [...existingOrders, order]
     console.log(`Neue Gesamtanzahl: ${updatedOrders.length} Aufträge`)
     
-    // Speichere Aufträge
-    if (redis) {
-      try {
-        await redis.set(ORDERS_KEY, updatedOrders)
-        console.log('Aufträge erfolgreich in Redis gespeichert')
-      } catch (error) {
-        console.log('Redis-Speicher-Fehler, verwende Fallback:', error)
-        fallbackOrders = updatedOrders
-        console.log('Aufträge in Fallback gespeichert')
-      }
-    } else {
+    // Speichere Aufträge persistent in JSONBin
+    const saved = await saveOrdersToJSONBin(updatedOrders)
+    if (!saved) {
+      // Fallback falls JSONBin nicht funktioniert
       fallbackOrders = updatedOrders
-      console.log('Aufträge in Fallback gespeichert')
+      console.log('Aufträge in Fallback gespeichert (JSONBin nicht verfügbar)')
     }
     
     // Log für Debugging
