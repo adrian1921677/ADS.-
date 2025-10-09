@@ -102,7 +102,6 @@ export default function HomePage() {
               <span className="mobile-b handwritten-underline">B</span>
             </div>
           </h1>
-          <div className="text-sm text-gray-300 mt-2">🧪 Test-Update v.2 - Datenpersistenz prüfen</div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
             <Button asChild className="hover-lift hover-glow px-8 py-3">
               <Link href="/kontakt">Anfrage starten</Link>
