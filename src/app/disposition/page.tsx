@@ -403,7 +403,7 @@ export default function DispositionPage() {
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold mb-4">Rechnung erstellen</h3>
             <p className="text-gray-600 mb-4">
-              Wählen Sie einen Auftrag aus der Liste aus und klicken Sie auf "Rechnung erstellen" 
+              Wählen Sie einen Auftrag aus der Liste aus und klicken Sie auf &quot;Rechnung erstellen&quot; 
               um eine Rechnung für diesen Auftrag zu generieren.
             </p>
             <div className="space-y-3">

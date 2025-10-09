@@ -92,7 +92,6 @@ interface Order {
   payload: any;
 }
 
-const ORDERS_KEY = 'orders'
 
 export async function GET() {
   try {
