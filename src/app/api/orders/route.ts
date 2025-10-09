@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server'
-// import { kv } from '@vercel/kv' // Temporär deaktiviert bis Vercel KV aktiviert ist
+import { Redis } from '@upstash/redis'
+
+// Upstash Redis Client
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+})
 
 interface OrderData {
   salutation: string;
@@ -39,14 +45,10 @@ interface Order {
 
 const ORDERS_KEY = 'orders'
 
-// Temporäre In-Memory-Lösung bis Vercel KV aktiviert ist
-let tempOrders: Order[] = []
-
 export async function GET() {
   try {
-    // Temporäre Lösung: Verwende In-Memory-Speicherung
-    // TODO: Zurück zu Vercel KV wechseln, sobald aktiviert
-    const orders = tempOrders
+    // Lade Aufträge aus Upstash Redis
+    const orders = await redis.get<Order[]>(ORDERS_KEY) || []
     
     // Falls keine Aufträge vorhanden sind, füge einen Demo-Auftrag hinzu
     if (orders.length === 0) {
@@ -89,8 +91,8 @@ export async function GET() {
         }
       }
       
-      // Speichere Demo-Auftrag temporär
-      tempOrders = [demoOrder]
+      // Speichere Demo-Auftrag in Redis
+      await redis.set(ORDERS_KEY, [demoOrder])
       return NextResponse.json([demoOrder])
     }
     
@@ -188,14 +190,14 @@ Auftrag #${orderId} wurde im Dispositionstool erstellt.
 Gesendet am: ${new Date().toLocaleString('de-DE')}
     `.trim()
 
-    // Temporäre Lösung: Verwende In-Memory-Speicherung
-    const existingOrders = tempOrders
+    // Lade bestehende Aufträge aus Redis
+    const existingOrders = await redis.get<Order[]>(ORDERS_KEY) || []
     
     // Füge neuen Auftrag hinzu
     const updatedOrders = [...existingOrders, order]
     
-    // Speichere temporär
-    tempOrders = updatedOrders
+    // Speichere in Redis
+    await redis.set(ORDERS_KEY, updatedOrders)
     
     // Log für Debugging
     console.log('Neuer Auftrag erstellt:', JSON.stringify(order, null, 2))
