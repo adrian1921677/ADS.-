@@ -22,8 +22,6 @@ export default function DispositionPage() {
   const [loginError, setLoginError] = useState('')
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
-  const [showCreate, setShowCreate] = useState(false)
-  const [showInvoice, setShowInvoice] = useState(false)
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set())
@@ -180,10 +178,10 @@ export default function DispositionPage() {
               <Button variant="outline" onClick={refreshOrders} title="Aktualisieren">
                 <RefreshCcw className="h-4 w-4" />
               </Button>
-              <Button onClick={() => setShowCreate(true)}>
+              <Button onClick={() => window.open('/kontakt', '_blank')}>
                 <Plus className="h-4 w-4 mr-2" />Auftrag erstellen
               </Button>
-              <Button variant="secondary" onClick={() => setShowInvoice(true)}>
+              <Button variant="secondary" onClick={() => alert('Rechnungserstellung wird in Kürze verfügbar sein!')}>
                 <FileText className="h-4 w-4 mr-2" /> Rechnung erstellen
               </Button>
               <Button 
