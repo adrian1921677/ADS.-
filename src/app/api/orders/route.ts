@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 // Persistente Speicherung mit JSONBin.io
 const JSONBIN_API_KEY = process.env.JSONBIN_API_KEY || 'your-api-key-here'
-const JSONBIN_BIN_ID = 'abdullahu-drive-orders'
+const JSONBIN_BIN_ID = '68e7c62643b1c97be9604453'
 
 // Fallback: In-Memory-Speicherung (nur für lokale Entwicklung)
 let fallbackOrders: Order[] = []
