@@ -378,20 +378,71 @@ export default function DispositionPage() {
 
       {/* Auftrag erstellen Modal */}
       {showCreateOrder && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold mb-4">Neuen Auftrag erstellen</h3>
-            <p className="text-gray-600 mb-4">
-              Für die Auftragserstellung verwenden Sie bitte das Kontaktformular. 
-              Dort werden alle notwendigen Daten erfasst und automatisch als Auftrag im System gespeichert.
-            </p>
-            <div className="flex gap-3">
-              <Button onClick={() => window.open('/kontakt', '_blank')} className="flex-1">
-                Zum Kontaktformular
-              </Button>
-              <Button variant="outline" onClick={() => setShowCreateOrder(false)}>
-                Abbrechen
-              </Button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h3 className="text-xl font-semibold mb-4">Neuen Auftrag erstellen</h3>
+              <p className="text-gray-600 mb-6">
+                Erstellen Sie einen Auftrag direkt in der Disposition. Alle Felder werden automatisch ausgefüllt.
+              </p>
+              
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Kundenname *</label>
+                    <Input placeholder="Max Mustermann" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Telefon *</label>
+                    <Input placeholder="+49 123 456 789" />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Fahrzeug *</label>
+                    <Input placeholder="VW Golf 8, B-AB 1234" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Status *</label>
+                    <select className="w-full border border-gray-300 rounded-md px-3 py-2">
+                      <option value="neu">neu</option>
+                      <option value="geplant">geplant</option>
+                      <option value="angenommen">angenommen</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Abholung *</label>
+                    <Input placeholder="Musterstraße 12a, 10115 Berlin" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ziel *</label>
+                    <Input placeholder="Beispielallee 7, 80331 München" />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Notizen</label>
+                  <textarea 
+                    className="w-full border border-gray-300 rounded-md px-3 py-2" 
+                    rows={3}
+                    placeholder="Besonderheiten, Notizen..."
+                  />
+                </div>
+              </div>
+              
+              <div className="flex gap-3 mt-6">
+                <Button className="flex-1">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Auftrag erstellen
+                </Button>
+                <Button variant="outline" onClick={() => setShowCreateOrder(false)}>
+                  Abbrechen
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -399,23 +450,81 @@ export default function DispositionPage() {
 
       {/* Rechnung erstellen Modal */}
       {showCreateInvoice && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold mb-4">Rechnung erstellen</h3>
-            <p className="text-gray-600 mb-4">
-              Wählen Sie einen Auftrag aus der Liste aus und klicken Sie auf &quot;Rechnung erstellen&quot; 
-              um eine Rechnung für diesen Auftrag zu generieren.
-            </p>
-            <div className="space-y-3">
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-800">
-                  <strong>Hinweis:</strong> Die Rechnungserstellung ist noch in Entwicklung. 
-                  Sie können Aufträge bereits verwalten und deren Status ändern.
-                </p>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h3 className="text-xl font-semibold mb-4">Rechnung erstellen</h3>
+              <p className="text-gray-600 mb-6">
+                Erstellen Sie eine Rechnung für einen bestehenden Auftrag.
+              </p>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Auftrag auswählen *</label>
+                  <select className="w-full border border-gray-300 rounded-md px-3 py-2">
+                    <option value="">Bitte Auftrag auswählen</option>
+                    {orders.map((order) => (
+                      <option key={order.id} value={order.id}>
+                        #{order.id} - {(order.payload as any)?.customer?.name || 'Unbekannt'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Kundenname *</label>
+                    <Input placeholder="Max Mustermann" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">E-Mail *</label>
+                    <Input placeholder="max@example.com" />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Fahrzeuginfo *</label>
+                  <Input placeholder="VW Golf 8, B-AB 1234" />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Abholadresse *</label>
+                    <Input placeholder="Musterstraße 12a, 10115 Berlin" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Zieladresse *</label>
+                    <Input placeholder="Beispielallee 7, 80331 München" />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Preis *</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">€</span>
+                    <Input placeholder="0.00" className="pl-8" />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Notizen</label>
+                  <textarea 
+                    className="w-full border border-gray-300 rounded-md px-3 py-2" 
+                    rows={3}
+                    placeholder="Zusätzliche Informationen zur Rechnung..."
+                  />
+                </div>
               </div>
-              <Button variant="outline" onClick={() => setShowCreateInvoice(false)} className="w-full">
-                Verstanden
-              </Button>
+              
+              <div className="flex gap-3 mt-6">
+                <Button className="flex-1">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Rechnung erstellen
+                </Button>
+                <Button variant="outline" onClick={() => setShowCreateInvoice(false)}>
+                  Abbrechen
+                </Button>
+              </div>
             </div>
           </div>
         </div>
