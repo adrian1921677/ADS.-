@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 // import { Textarea } from '@/components/ui/textarea'
 // import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, RefreshCcw, FileText, Search } from 'lucide-react'
+import { Plus, RefreshCcw, FileText, Search, Lock } from 'lucide-react'
 
 interface Order {
   id: string;
@@ -17,6 +17,9 @@ interface Order {
 }
 
 export default function DispositionPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [password, setPassword] = useState('')
+  const [loginError, setLoginError] = useState('')
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
@@ -25,6 +28,32 @@ export default function DispositionPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set())
   const [showDatabaseView, setShowDatabaseView] = useState(false)
+
+  const CORRECT_PASSWORD = 'ADS'
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (password === CORRECT_PASSWORD) {
+      setIsAuthenticated(true)
+      setLoginError('')
+      // Speichere Authentifizierung in sessionStorage
+      sessionStorage.setItem('disposition_authenticated', 'true')
+    } else {
+      setLoginError('Falsches Passwort. Bitte versuchen Sie es erneut.')
+    }
+  }
+
+  const handleLogout = () => {
+    setIsAuthenticated(false)
+    setPassword('')
+    sessionStorage.removeItem('disposition_authenticated')
+  }
+
+  // Prüfe beim Laden der Seite, ob bereits authentifiziert
+  useEffect(() => {
+    const isAuth = sessionStorage.getItem('disposition_authenticated') === 'true'
+    setIsAuthenticated(isAuth)
+  }, [])
 
   async function refreshOrders() {
     setLoading(true)
@@ -73,12 +102,72 @@ export default function DispositionPage() {
     })
   }
 
+  // Login-Screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <div className="mx-auto h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <Lock className="h-6 w-6 text-blue-600" />
+            </div>
+            <h2 className="mt-6 text-3xl font-bold text-gray-900">Disposition</h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Bitte geben Sie das Passwort ein, um fortzufahren
+            </p>
+          </div>
+          <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Passwort
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Passwort"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            {loginError && (
+              <div className="text-red-600 text-sm text-center">
+                {loginError}
+              </div>
+            )}
+
+            <div>
+              <button
+                type="submit"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Anmelden
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Disposition</h1>
-          <p className="text-gray-600">Verwalte deine Fahrzeugüberführungen</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Disposition</h1>
+            <p className="text-gray-600">Verwalte deine Fahrzeugüberführungen</p>
+          </div>
+          <Button 
+            onClick={handleLogout}
+            variant="outline"
+            className="text-red-600 border-red-300 hover:bg-red-50"
+          >
+            Abmelden
+          </Button>
         </div>
 
         {/* Toolbar */}
