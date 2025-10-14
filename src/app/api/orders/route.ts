@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { readOrders, addOrder } from '@/lib/database-orders'
+import { readOrders, addOrder } from '@/lib/prisma-orders'
 
 export async function GET() {
   try {

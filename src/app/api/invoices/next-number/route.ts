@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getNextInvoiceNumber } from '@/lib/database-invoices'
+import { getNextInvoiceNumber } from '@/lib/prisma-invoices'
 
 export async function GET() {
   try {
