@@ -1,5 +1,5 @@
 import { db } from './database'
-import { orders, orderNumbers, type Order, type NewOrder } from './schema'
+import { orders, orderNumbers, type NewOrder } from './schema'
 import { eq, desc } from 'drizzle-orm'
 
 export type OrderStatus =

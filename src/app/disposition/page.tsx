@@ -20,7 +20,6 @@ interface Order {
 export default function DispositionPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
-  const [showCreate, setShowCreate] = useState(false)
   const [showInvoice, setShowInvoice] = useState(false)
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('')

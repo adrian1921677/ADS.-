@@ -1,5 +1,5 @@
 import { db } from './database'
-import { invoices, invoiceNumbers, type Invoice, type NewInvoice } from './schema'
+import { invoices, invoiceNumbers, type NewInvoice } from './schema'
 import { eq, desc } from 'drizzle-orm'
 
 export interface InvoiceItem {

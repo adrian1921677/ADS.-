@@ -1,0 +1,128 @@
+[
+  {
+    "id": "1757704942114-j0x1g4",
+    "createdAt": "2025-09-12T19:22:22.114Z",
+    "invoiceNumber": "ADS-2025-00006",
+    "customer": {
+      "name": "Jeton Abdullahu",
+      "address": "Alhausstraße 35, 42281 Wuppertal",
+      "email": "asdfasfsdafsf"
+    },
+    "items": [
+      {
+        "description": "Fahrzeugüberführung (Abholung & Zustellung) (Abholung: sdfdsfdsf · 2322-12-12 12:42 → Ziel: sdfdasdafas · 2121-03-12 12:21)",
+        "quantity": 1,
+        "unitPrice": 40
+      }
+    ],
+    "netAmount": 40,
+    "vatPercent": 19,
+    "vatAmount": 7.6,
+    "totalAmount": 47.6
+  },
+  {
+    "id": "1757704680147-l8cv08",
+    "createdAt": "2025-09-12T19:18:00.147Z",
+    "invoiceNumber": "ADS-2025-00005",
+    "customer": {
+      "name": "Jeton Abdullahu",
+      "address": "Alhausstraße 35, 42281 Wuppertal",
+      "email": "adriandsfusdfusewwe"
+    },
+    "items": [
+      {
+        "description": "Fahrzeugüberführung (Abholung & Zustellung) (Abholung: wrwerwer · 0031-03-12 12:12 → Ziel: 13213ewqe · 0001-03-12 12:31)",
+        "quantity": 1,
+        "unitPrice": 350
+      }
+    ],
+    "netAmount": 350,
+    "vatPercent": 19,
+    "vatAmount": 66.5,
+    "totalAmount": 416.5
+  },
+  {
+    "id": "1757704535783-mi8ox7",
+    "createdAt": "2025-09-12T19:15:35.783Z",
+    "invoiceNumber": "ADS-2025-00004",
+    "customer": {
+      "name": "Jeton Abdullahu",
+      "address": "Alhausstraße 35, 42281 Wuppertal",
+      "email": "adrian.abdullahu.17@gmail.com"
+    },
+    "items": [
+      {
+        "description": "Fahrzeugüberführung (Abholung & Zustellung) (Abholung: ewewrtrewter · 2002-09-28 12:53 → Ziel: werwrwrw · 1211-03-12 12:31)",
+        "quantity": 1,
+        "unitPrice": 376
+      }
+    ],
+    "netAmount": 376,
+    "vatPercent": 19,
+    "vatAmount": 71.44,
+    "totalAmount": 447.44
+  },
+  {
+    "id": "1757704533302-ogo87y",
+    "createdAt": "2025-09-12T19:15:33.302Z",
+    "invoiceNumber": "ADS-2025-00003",
+    "customer": {
+      "name": "Jeton Abdullahu",
+      "address": "Alhausstraße 35, 42281 Wuppertal",
+      "email": "adrian.abdullahu.17@gmail.com"
+    },
+    "items": [
+      {
+        "description": "Fahrzeugüberführung (Abholung & Zustellung) (Abholung: ewewrtrewter · 2002-09-28 12:53 → Ziel: werwrwrw · 1211-03-12 12:31)",
+        "quantity": 1,
+        "unitPrice": 376
+      }
+    ],
+    "netAmount": 376,
+    "vatPercent": 19,
+    "vatAmount": 71.44,
+    "totalAmount": 447.44
+  },
+  {
+    "id": "1757704503226-ilq1th",
+    "createdAt": "2025-09-12T19:15:03.226Z",
+    "invoiceNumber": "ADS-2025-00002",
+    "customer": {
+      "name": "Jeton Abdullahu",
+      "address": "Alhausstraße 35, 42281 Wuppertal",
+      "email": ""
+    },
+    "items": [
+      {
+        "description": "Fahrzeugüberführung (Abholung & Zustellung) (Abholung: ewewrtrewter · 2002-09-28 12:53 → Ziel: werwrwrw · 1211-03-12 12:31)",
+        "quantity": 1,
+        "unitPrice": 376
+      }
+    ],
+    "netAmount": 376,
+    "vatPercent": 19,
+    "vatAmount": 71.44,
+    "totalAmount": 447.44
+  },
+  {
+    "id": "1757704200864-rkl73z",
+    "createdAt": "2025-09-12T19:10:00.864Z",
+    "invoiceNumber": "ADS-2025-00001",
+    "customer": {
+      "name": "Jeton Abdullahu",
+      "address": "Alhausstraße 35, 42281 Wuppertal",
+      "email": "adrian.abdullahu.17@gmail.com"
+    },
+    "items": [
+      {
+        "description": "Fahrzeugüberführung (Abholung & Zustellung) (Abholung: Fitkiv 31, 42281 Wuppertal · 2025-09-28 16:32 → Ziel: Fikkkktiv 23, 42281 Wuppertal · 2025-09-28 20:35)",
+        "quantity": 1,
+        "unitPrice": 47
+      }
+    ],
+    "netAmount": 47,
+    "vatPercent": 19,
+    "vatAmount": 8.93,
+    "totalAmount": 55.93
+  }
+]

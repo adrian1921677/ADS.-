@@ -119,7 +119,7 @@ async function migrateData() {
 
     // Sequenznummern für das aktuelle Jahr initialisieren
     console.log('🔢 Initialisiere Sequenznummern...')
-    const currentYear = new Date().getFullYear()
+    const currentYear = new Date().getFullYear().toString()
     
     // Prüfen ob bereits Sequenznummern für das Jahr existieren
     const existingOrderSeq = await db

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "1705123456789",
+    "createdAt": "2024-01-15T10:30:00.000Z",
+    "updatedAt": "2024-01-15T10:30:00.000Z",
+    "status": "geplant",
+    "payload": {
+      "source": "manual",
+      "customer": {
+        "name": "Max Mustermann",
+        "phone": "+49 123 456789",
+        "email": "max.mustermann@email.com"
+      },
+      "vehicle": {
+        "make": "BMW",
+        "model": "X5",
+        "plate": "B-AB 123",
+        "vin": "WBAFR7C50LC123456"
+      },
+      "pickup": {
+        "street": "Musterstraße",
+        "houseNumber": "123",
+        "postalCode": "12345",
+        "city": "Musterstadt",
+        "date": "2024-01-16",
+        "time": "10:00"
+      },
+      "delivery": {
+        "street": "Zielstraße",
+        "houseNumber": "456",
+        "postalCode": "54321",
+        "city": "Zielstadt",
+        "date": "2024-01-16",
+        "time": "15:00"
+      },
+      "notes": "Vorsichtig fahren - neues Fahrzeug",
+      "driver": "Hans Müller",
+      "invoiceNumber": "ADS-2024-0001"
+    }
+  },
+  {
+    "id": "1705123456790",
+    "createdAt": "2024-01-15T14:45:00.000Z",
+    "updatedAt": "2024-01-15T14:45:00.000Z",
+    "payload": {
+      "source": "manual",
+      "customer": {
+        "name": "Anna Schmidt",
+        "phone": "+49 987 654321",
+        "email": "anna.schmidt@email.com"
+      },
+      "vehicle": {
+        "make": "Mercedes",
+        "model": "C-Klasse",
+        "plate": "M-AB 789",
+        "vin": "WDD2050401A123456"
+      },
+      "pickup": {
+        "street": "Hauptstraße",
+        "houseNumber": "78",
+        "postalCode": "10115",
+        "city": "Berlin",
+        "date": "2024-01-17",
+        "time": "09:30"
+      },
+      "delivery": {
+        "street": "Bahnhofstraße",
+        "houseNumber": "12",
+        "postalCode": "20095",
+        "city": "Hamburg",
+        "date": "2024-01-17",
+        "time": "16:00"
+      },
+      "notes": "Fahrzeug hat Kratzer an der rechten Seite - dokumentieren",
+      "driver": "Peter Weber",
+      "invoiceNumber": "ADS-2024-0002"
+    },
+    "driver": "",
+    "status": "wartend",
+    "waitReason": "unbekannt"
+  }
+]
