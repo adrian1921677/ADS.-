@@ -99,32 +99,37 @@ export async function addOrder(
   payload: Record<string, unknown>,
   opts?: { status?: OrderStatus; driver?: string }
 ): Promise<OrderRecord> {
-  const orderNumber = await generateOrderNumber()
-  const invoiceNumber = await generateInvoiceNumber()
+  try {
+    const orderNumber = await generateOrderNumber()
+    const invoiceNumber = await generateInvoiceNumber()
 
-  const newOrder = await prisma.order.create({
-    data: {
-      status: opts?.status ?? 'neu',
-      driver: opts?.driver,
-      orderNumber,
-      invoiceNumber,
-      payload: payload as any,
+    const newOrder = await prisma.order.create({
+      data: {
+        status: opts?.status ?? 'neu',
+        driver: opts?.driver,
+        orderNumber,
+        invoiceNumber,
+        payload: payload as any,
+      }
+    })
+
+    return {
+      ...newOrder,
+      id: newOrder.id.toString(),
+      createdAt: newOrder.createdAt.toISOString(),
+      updatedAt: newOrder.updatedAt.toISOString(),
+      status: newOrder.status as OrderStatus,
+      payload: newOrder.payload as Record<string, unknown>,
+      attachments: newOrder.attachments ? (newOrder.attachments as { filename: string; url: string; uploadedAt: string }[]) : [],
+      waitReason: newOrder.waitReason || undefined,
+      driver: newOrder.driver || undefined,
+      internalNotes: newOrder.internalNotes || undefined,
+      orderNumber: newOrder.orderNumber || undefined,
+      invoiceNumber: newOrder.invoiceNumber || undefined,
     }
-  })
-
-  return {
-    ...newOrder,
-    id: newOrder.id.toString(),
-    createdAt: newOrder.createdAt.toISOString(),
-    updatedAt: newOrder.updatedAt.toISOString(),
-    status: newOrder.status as OrderStatus,
-    payload: newOrder.payload as Record<string, unknown>,
-    attachments: newOrder.attachments ? (newOrder.attachments as { filename: string; url: string; uploadedAt: string }[]) : [],
-    waitReason: newOrder.waitReason || undefined,
-    driver: newOrder.driver || undefined,
-    internalNotes: newOrder.internalNotes || undefined,
-    orderNumber: newOrder.orderNumber || undefined,
-    invoiceNumber: newOrder.invoiceNumber || undefined,
+  } catch (error) {
+    console.error('Fehler beim Erstellen des Auftrags:', error)
+    throw new Error(`Datenbankfehler: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}`)
   }
 }
 

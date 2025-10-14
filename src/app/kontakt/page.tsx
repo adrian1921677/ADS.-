@@ -78,12 +78,68 @@ export default function KontaktPage() {
     setSubmitStatus('idle')
 
     try {
+      // Formatiere die Daten für die API
+      const orderPayload = {
+        customer: {
+          name: data.name,
+          phone: data.phone,
+          email: data.email
+        },
+        vehicle: {
+          make: data.vehicleMake,
+          model: data.vehicleModel,
+          plate: data.vehiclePlate,
+          type: data.vehicleType,
+          notes: data.vehicleNotes
+        },
+        pickup: {
+          street: data.pickupStreet,
+          houseNumber: data.pickupHouseNumber,
+          postalCode: data.pickupPostalCode,
+          city: data.pickupCity,
+          date: data.pickupDate,
+          time: data.pickupTime
+        },
+        delivery: {
+          street: data.deliveryStreet,
+          houseNumber: data.deliveryHouseNumber,
+          postalCode: data.deliveryPostalCode,
+          city: data.deliveryCity,
+          date: data.deliveryDate,
+          time: data.deliveryTime
+        },
+        contact: {
+          method: data.contactMethod,
+          callWindow: data.callWindow
+        },
+        notes: data.message,
+        gdprConsent: data.gdprConsent,
+        newsletterConsent: data.newsletterConsent
+      }
+
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          payload: orderPayload,
+          status: 'neu'
+        }),
       })
-      if (!res.ok) throw new Error('Fehler bei der Übermittlung')
+      
+      if (!res.ok) {
+        const errorData = await res.json()
+        console.error('API Error:', errorData)
+        throw new Error(errorData.error || 'Fehler bei der Übermittlung')
+      }
+      
+      const responseData = await res.json()
+      
+      // Prüfe auf Warnung (Datenbank nicht verfügbar)
+      if (responseData.warning) {
+        console.warn('Datenbank-Warnung:', responseData.warning)
+        // Zeige trotzdem Erfolg an, da der Auftrag gespeichert wurde
+      }
+      
       setSubmitStatus('success')
       reset()
     } catch (error) {
