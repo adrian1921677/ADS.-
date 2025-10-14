@@ -44,13 +44,14 @@ export function ClientHeader() {
         <div className="flex justify-between items-center h-32">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-4 group">
-            <div className="p-6 bg-navy-50 rounded-xl group-hover:bg-navy-100 transition-colors">
+            <div className="p-3 bg-white/90 rounded-xl group-hover:bg-white transition-colors shadow-lg">
               <Image
                 src="/logo.png"
                 alt="Abdullahu Drive Solutions"
-                width={160}
-                height={160}
-                className="h-40 w-auto"
+                width={120}
+                height={120}
+                className="h-16 w-auto"
+                priority
               />
             </div>
             <div className="hidden sm:block">

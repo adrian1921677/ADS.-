@@ -92,6 +92,7 @@ export default function HomePage() {
       {/* SEO meta via head not supported directly here in Next 15 app dir; we rely on metadata in layout or route handlers if needed. */}
       
       {/* Hero Section – reduziert und professionell */}
+      {/* Hero Section */}
       <section className="relative text-white overflow-hidden py-24 bg-gradient-to-br from-[#0C2A3A] to-[#102538]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="hero-title text-white">
