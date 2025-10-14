@@ -129,7 +129,7 @@ async function migrateData() {
       .limit(1)
     
     if (existingOrderSeq.length === 0) {
-      await db.insert(orderNumbers).values({ year: currentYear, sequence: 0 })
+      await db.insert(orderNumbers).values({ year: currentYear, sequence: "0" })
     }
 
     const existingInvoiceSeq = await db
@@ -139,7 +139,7 @@ async function migrateData() {
       .limit(1)
     
     if (existingInvoiceSeq.length === 0) {
-      await db.insert(invoiceNumbers).values({ year: currentYear, sequence: 0 })
+      await db.insert(invoiceNumbers).values({ year: currentYear, sequence: "0" })
     }
 
     console.log('✅ Sequenznummern initialisiert')
