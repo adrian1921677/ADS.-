@@ -117,22 +117,63 @@ export default function KontaktPage() {
         newsletterConsent: data.newsletterConsent
       }
 
-      const res = await fetch('/api/orders-neon', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          payload: orderPayload,
-          status: 'neu'
-        }),
-      })
+      // Versuche zuerst die neue Neon-API, dann Fallback zur Prisma-API
+      let res
+      let apiUsed = 'neon'
+      
+      try {
+        console.log('Trying Neon API first...')
+        res = await fetch('/api/orders-neon', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            payload: orderPayload,
+            status: 'neu'
+          }),
+        })
+        
+        if (!res.ok) {
+          throw new Error(`Neon API failed: ${res.status}`)
+        }
+        
+        console.log('Neon API successful')
+      } catch (neonError) {
+        console.warn('Neon API failed, trying Prisma API:', neonError)
+        apiUsed = 'prisma'
+        
+        res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            payload: orderPayload,
+            status: 'neu'
+          }),
+        })
+      }
+      
+      console.log(`Using ${apiUsed} API - Response status:`, res.status)
+      console.log('Response headers:', Object.fromEntries(res.headers.entries()))
       
       if (!res.ok) {
-        const errorData = await res.json()
-        console.error('API Error:', errorData)
-        throw new Error(errorData.error || 'Fehler bei der Übermittlung')
+        let errorData
+        try {
+          errorData = await res.json()
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError)
+          errorData = { error: `HTTP ${res.status}: ${res.statusText}` }
+        }
+        
+        console.error('API Error:', {
+          status: res.status,
+          statusText: res.statusText,
+          error: errorData
+        })
+        
+        throw new Error(errorData.error || `HTTP ${res.status}: ${res.statusText}`)
       }
       
       const responseData = await res.json()
+      console.log('Success response:', responseData)
       
       // Prüfe auf Warnung (Datenbank nicht verfügbar)
       if (responseData.warning) {
