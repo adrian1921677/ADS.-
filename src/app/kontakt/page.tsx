@@ -117,7 +117,7 @@ export default function KontaktPage() {
         newsletterConsent: data.newsletterConsent
       }
 
-      const res = await fetch('/api/orders', {
+      const res = await fetch('/api/orders-neon', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

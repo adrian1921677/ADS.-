@@ -29,7 +29,7 @@ export default function DispositionPage() {
   async function refreshOrders() {
     setLoading(true)
     try {
-      const res = await fetch('/api/orders', { cache: 'no-store' })
+      const res = await fetch('/api/orders-neon', { cache: 'no-store' })
       const data = await res.json()
       setOrders(Array.isArray(data) ? data : [])
     } catch (error) {
