@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { X, Save, User, Car, MapPin } from 'lucide-react'
-import GoogleMapsAutocomplete from './GoogleMapsAutocomplete'
 
 interface OrderFormProps {
   onClose: () => void
@@ -35,30 +34,16 @@ interface OrderData {
     houseNumber: string
     postalCode: string
     city: string
-    state?: string
-    country?: string
     date: string
     time: string
-    placeId?: string
-    coordinates?: {
-      lat: number
-      lng: number
-    }
   }
   delivery: {
     street: string
     houseNumber: string
     postalCode: string
     city: string
-    state?: string
-    country?: string
     date: string
     time: string
-    placeId?: string
-    coordinates?: {
-      lat: number
-      lng: number
-    }
   }
   notes?: string
 }
@@ -88,30 +73,16 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
       houseNumber: '',
       postalCode: '',
       city: '',
-      state: '',
-      country: '',
       date: '',
-      time: '',
-      placeId: '',
-      coordinates: {
-        lat: 0,
-        lng: 0
-      }
+      time: ''
     },
     delivery: {
       street: '',
       houseNumber: '',
       postalCode: '',
       city: '',
-      state: '',
-      country: '',
       date: '',
-      time: '',
-      placeId: '',
-      coordinates: {
-        lat: 0,
-        lng: 0
-      }
+      time: ''
     },
     notes: ''
   })
@@ -126,22 +97,6 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
     }))
   }
 
-  const handleAddressSelect = (address: any, section: 'pickup' | 'delivery') => {
-    setFormData(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        street: address.street || '',
-        houseNumber: address.houseNumber || '',
-        postalCode: address.postalCode || '',
-        city: address.city || '',
-        state: address.state || '',
-        country: address.country || '',
-        placeId: address.placeId || '',
-        coordinates: address.coordinates || { lat: 0, lng: 0 }
-      }
-    }))
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -309,16 +264,6 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
                 <h3 className="text-lg font-semibold">Abholung</h3>
               </div>
               
-              {/* Google Maps Adresssuche */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Adresse suchen *</label>
-                <GoogleMapsAutocomplete
-                  onAddressSelect={(address) => handleAddressSelect(address, 'pickup')}
-                  placeholder="Adresse eingeben (z.B. Musterstraße 123, 12345 Musterstadt)"
-                />
-              </div>
-
-              {/* Manuelle Eingabe als Fallback */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Input
                   placeholder="Straße *"
@@ -371,16 +316,6 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
                 <h3 className="text-lg font-semibold">Ziel</h3>
               </div>
               
-              {/* Google Maps Adresssuche */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Adresse suchen *</label>
-                <GoogleMapsAutocomplete
-                  onAddressSelect={(address) => handleAddressSelect(address, 'delivery')}
-                  placeholder="Adresse eingeben (z.B. Musterstraße 123, 12345 Musterstadt)"
-                />
-              </div>
-
-              {/* Manuelle Eingabe als Fallback */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Input
                   placeholder="Straße *"

@@ -11,7 +11,6 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import GoogleMapsAutocomplete from '@/components/GoogleMapsAutocomplete'
  
 
 const contactSchema = z.object({
@@ -25,10 +24,16 @@ const contactSchema = z.object({
   vehiclePlate: z.string().min(1, 'Bitte Kennzeichen angeben'),
   vehicleMakeModel: z.string().min(1, 'Bitte Marke/Modell angeben'),
   vehicleNotes: z.string().optional(),
-  pickupAddress: z.string().min(5, 'Bitte Abholadresse angeben'),
+  pickupStreet: z.string().min(2, 'Bitte Straße angeben'),
+  pickupHouseNumber: z.string().min(1, 'Bitte Hausnummer angeben'),
+  pickupPostalCode: z.string().regex(/^[0-9]{5}$/, 'Bitte gültige PLZ (5 Ziffern) angeben'),
+  pickupCity: z.string().min(2, 'Bitte Ort angeben'),
   pickupDate: z.string().min(1, 'Bitte Abholdatum angeben'),
   pickupTime: z.string().min(1, 'Bitte Abholzeit angeben'),
-  deliveryAddress: z.string().min(5, 'Bitte Zieladresse angeben'),
+  deliveryStreet: z.string().min(2, 'Bitte Straße angeben'),
+  deliveryHouseNumber: z.string().min(1, 'Bitte Hausnummer angeben'),
+  deliveryPostalCode: z.string().regex(/^[0-9]{5}$/, 'Bitte gültige PLZ (5 Ziffern) angeben'),
+  deliveryCity: z.string().min(2, 'Bitte Ort angeben'),
   deliveryDate: z.string().optional(),
   deliveryTime: z.string().optional(),
   message: z.string().optional(),
@@ -45,26 +50,6 @@ type ContactFormData = z.infer<typeof contactSchema>
 export default function KontaktPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [, setPickupAddressData] = useState({
-    street: '',
-    houseNumber: '',
-    postalCode: '',
-    city: '',
-    state: '',
-    country: '',
-    placeId: '',
-    coordinates: { lat: 0, lng: 0 }
-  })
-  const [, setDeliveryAddressData] = useState({
-    street: '',
-    houseNumber: '',
-    postalCode: '',
-    city: '',
-    state: '',
-    country: '',
-    placeId: '',
-    coordinates: { lat: 0, lng: 0 }
-  })
 
   const {
     register,
@@ -83,16 +68,6 @@ export default function KontaktPage() {
       setValue('callWindow', '')
     }
   }, [contactMethod, setValue])
-
-  const handlePickupAddressSelect = (address: any) => {
-    setPickupAddressData(address)
-    setValue('pickupAddress', `${address.street} ${address.houseNumber}, ${address.postalCode} ${address.city}`)
-  }
-
-  const handleDeliveryAddressSelect = (address: any) => {
-    setDeliveryAddressData(address)
-    setValue('deliveryAddress', `${address.street} ${address.houseNumber}, ${address.postalCode} ${address.city}`)
-  }
 
 
   const onSubmit = async (data: ContactFormData) => {
@@ -337,89 +312,74 @@ export default function KontaktPage() {
                   {/* Transport Details */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="border rounded-lg p-4 bg-neutral-50">
-                      <div className="text-sm font-semibold text-neutral-700 mb-4">Abholung</div>
+                      <div className="text-sm font-semibold text-neutral-700 mb-2">Abholung</div>
                       
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-neutral-700 mb-2">Adresse suchen *</label>
-                          <GoogleMapsAutocomplete
-                            onAddressSelect={handlePickupAddressSelect}
-                            placeholder="Adresse eingeben (z.B. Musterstraße 123, 12345 Musterstadt)"
-                          />
-                          {errors.pickupAddress && (
-                            <p className="text-red-500 text-sm mt-1">{errors.pickupAddress.message}</p>
-                          )}
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="md:col-span-2">
+                          <label htmlFor="pickupStreet" className="block text-sm font-medium text-neutral-700 mb-2">Straße *</label>
+                          <Input id="pickupStreet" {...register('pickupStreet')} placeholder="z.B. Musterstraße" className={errors.pickupStreet ? 'border-red-500' : ''} />
+                          {errors.pickupStreet && (<p className="text-red-500 text-sm mt-1">{errors.pickupStreet.message}</p>)}
                         </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label htmlFor="pickupDate" className="block text-sm font-medium text-neutral-700 mb-2">Datum *</label>
-                            <Input 
-                              id="pickupDate" 
-                              type="date" 
-                              {...register('pickupDate')} 
-                              className={errors.pickupDate ? 'border-red-500' : ''} 
-                            />
-                            {errors.pickupDate && (
-                              <p className="text-red-500 text-sm mt-1">{errors.pickupDate.message}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label htmlFor="pickupTime" className="block text-sm font-medium text-neutral-700 mb-2">Uhrzeit *</label>
-                            <Input 
-                              id="pickupTime" 
-                              type="time" 
-                              {...register('pickupTime')} 
-                              className={errors.pickupTime ? 'border-red-500' : ''} 
-                            />
-                            {errors.pickupTime && (
-                              <p className="text-red-500 text-sm mt-1">{errors.pickupTime.message}</p>
-                            )}
-                          </div>
+                        <div>
+                          <label htmlFor="pickupHouseNumber" className="block text-sm font-medium text-neutral-700 mb-2">Nr. *</label>
+                          <Input id="pickupHouseNumber" {...register('pickupHouseNumber')} placeholder="z.B. 12a" className={errors.pickupHouseNumber ? 'border-red-500' : ''} />
+                          {errors.pickupHouseNumber && (<p className="text-red-500 text-sm mt-1">{errors.pickupHouseNumber.message}</p>)}
+                        </div>
+                        <div>
+                          <label htmlFor="pickupPostalCode" className="block text-sm font-medium text-neutral-700 mb-2">PLZ *</label>
+                          <Input id="pickupPostalCode" {...register('pickupPostalCode')} placeholder="z.B. 10115" className={errors.pickupPostalCode ? 'border-red-500' : ''} />
+                          {errors.pickupPostalCode && (<p className="text-red-500 text-sm mt-1">{errors.pickupPostalCode.message}</p>)}
+                        </div>
+                        <div className="md:col-span-2">
+                          <label htmlFor="pickupCity" className="block text-sm font-medium text-neutral-700 mb-2">Ort *</label>
+                          <Input id="pickupCity" {...register('pickupCity')} placeholder="z.B. Berlin" className={errors.pickupCity ? 'border-red-500' : ''} />
+                          {errors.pickupCity && (<p className="text-red-500 text-sm mt-1">{errors.pickupCity.message}</p>)}
+                        </div>
+                        <div>
+                          <label htmlFor="pickupDate" className="block text-sm font-medium text-neutral-700 mb-2">Datum *</label>
+                          <Input id="pickupDate" type="date" {...register('pickupDate')} className={errors.pickupDate ? 'border-red-500' : ''} />
+                          {errors.pickupDate && (<p className="text-red-500 text-sm mt-1">{errors.pickupDate.message}</p>)}
+                        </div>
+                        <div>
+                          <label htmlFor="pickupTime" className="block text-sm font-medium text-neutral-700 mb-2">Uhrzeit *</label>
+                          <Input id="pickupTime" type="time" {...register('pickupTime')} className={errors.pickupTime ? 'border-red-500' : ''} />
+                          {errors.pickupTime && (<p className="text-red-500 text-sm mt-1">{errors.pickupTime.message}</p>)}
                         </div>
                       </div>
                     </div>
-                    
                     <div className="border rounded-lg p-4 bg-neutral-50">
-                      <div className="text-sm font-semibold text-neutral-700 mb-4">Ziel</div>
+                      <div className="text-sm font-semibold text-neutral-700 mb-2">Ziel</div>
                       
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-neutral-700 mb-2">Adresse suchen *</label>
-                          <GoogleMapsAutocomplete
-                            onAddressSelect={handleDeliveryAddressSelect}
-                            placeholder="Adresse eingeben (z.B. Beispielallee 7, 80331 München)"
-                          />
-                          {errors.deliveryAddress && (
-                            <p className="text-red-500 text-sm mt-1">{errors.deliveryAddress.message}</p>
-                          )}
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="md:col-span-2">
+                          <label htmlFor="deliveryStreet" className="block text-sm font-medium text-neutral-700 mb-2">Straße *</label>
+                          <Input id="deliveryStreet" {...register('deliveryStreet')} placeholder="z.B. Beispielallee" className={errors.deliveryStreet ? 'border-red-500' : ''} />
+                          {errors.deliveryStreet && (<p className="text-red-500 text-sm mt-1">{errors.deliveryStreet.message}</p>)}
                         </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label htmlFor="deliveryDate" className="block text-sm font-medium text-neutral-700 mb-2">Datum (optional)</label>
-                            <Input 
-                              id="deliveryDate" 
-                              type="date" 
-                              {...register('deliveryDate')} 
-                              className={errors.deliveryDate ? 'border-red-500' : ''} 
-                            />
-                            {errors.deliveryDate && (
-                              <p className="text-red-500 text-sm mt-1">{errors.deliveryDate.message}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label htmlFor="deliveryTime" className="block text-sm font-medium text-neutral-700 mb-2">Uhrzeit (optional)</label>
-                            <Input 
-                              id="deliveryTime" 
-                              type="time" 
-                              {...register('deliveryTime')} 
-                              className={errors.deliveryTime ? 'border-red-500' : ''} 
-                            />
-                            {errors.deliveryTime && (
-                              <p className="text-red-500 text-sm mt-1">{errors.deliveryTime.message}</p>
-                            )}
-                          </div>
+                        <div>
+                          <label htmlFor="deliveryHouseNumber" className="block text-sm font-medium text-neutral-700 mb-2">Nr. *</label>
+                          <Input id="deliveryHouseNumber" {...register('deliveryHouseNumber')} placeholder="z.B. 7" className={errors.deliveryHouseNumber ? 'border-red-500' : ''} />
+                          {errors.deliveryHouseNumber && (<p className="text-red-500 text-sm mt-1">{errors.deliveryHouseNumber.message}</p>)}
+                        </div>
+                        <div>
+                          <label htmlFor="deliveryPostalCode" className="block text-sm font-medium text-neutral-700 mb-2">PLZ *</label>
+                          <Input id="deliveryPostalCode" {...register('deliveryPostalCode')} placeholder="z.B. 80331" className={errors.deliveryPostalCode ? 'border-red-500' : ''} />
+                          {errors.deliveryPostalCode && (<p className="text-red-500 text-sm mt-1">{errors.deliveryPostalCode.message}</p>)}
+                        </div>
+                        <div className="md:col-span-2">
+                          <label htmlFor="deliveryCity" className="block text-sm font-medium text-neutral-700 mb-2">Ort *</label>
+                          <Input id="deliveryCity" {...register('deliveryCity')} placeholder="z.B. München" className={errors.deliveryCity ? 'border-red-500' : ''} />
+                          {errors.deliveryCity && (<p className="text-red-500 text-sm mt-1">{errors.deliveryCity.message}</p>)}
+                        </div>
+                        <div>
+                          <label htmlFor="deliveryDate" className="block text-sm font-medium text-neutral-700 mb-2">Datum (optional)</label>
+                          <Input id="deliveryDate" type="date" {...register('deliveryDate')} className={errors.deliveryDate ? 'border-red-500' : ''} />
+                          {errors.deliveryDate && (<p className="text-red-500 text-sm mt-1">{errors.deliveryDate.message}</p>)}
+                        </div>
+                        <div>
+                          <label htmlFor="deliveryTime" className="block text-sm font-medium text-neutral-700 mb-2">Uhrzeit (optional)</label>
+                          <Input id="deliveryTime" type="time" {...register('deliveryTime')} className={errors.deliveryTime ? 'border-red-500' : ''} />
+                          {errors.deliveryTime && (<p className="text-red-500 text-sm mt-1">{errors.deliveryTime.message}</p>)}
                         </div>
                       </div>
                     </div>
