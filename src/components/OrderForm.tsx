@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { X, Save, User, Car, MapPin } from 'lucide-react'
+import LicensePlateInput from './LicensePlateInput'
+import VehicleMakeSelect from './VehicleMakeSelect'
 
 interface OrderFormProps {
   onClose: () => void
@@ -180,24 +182,33 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
               
               {/* Grunddaten */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Input
-                  placeholder="Marke *"
-                  value={formData.vehicle.make}
-                  onChange={(e) => handleInputChange('vehicle', 'make', e.target.value)}
-                  required
-                />
-                <Input
-                  placeholder="Modell *"
-                  value={formData.vehicle.model}
-                  onChange={(e) => handleInputChange('vehicle', 'model', e.target.value)}
-                  required
-                />
-                <Input
-                  placeholder="Kennzeichen *"
-                  value={formData.vehicle.plate}
-                  onChange={(e) => handleInputChange('vehicle', 'plate', e.target.value)}
-                  required
-                />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Marke *</label>
+                  <VehicleMakeSelect
+                    value={formData.vehicle.make}
+                    onChange={(value) => handleInputChange('vehicle', 'make', value)}
+                    placeholder="Marke wählen"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Modell *</label>
+                  <Input
+                    placeholder="Modell eingeben"
+                    value={formData.vehicle.model}
+                    onChange={(e) => handleInputChange('vehicle', 'model', e.target.value)}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Kennzeichen *</label>
+                  <LicensePlateInput
+                    value={formData.vehicle.plate}
+                    onChange={(value) => handleInputChange('vehicle', 'plate', value)}
+                    placeholder="z.B. B-AB 1234"
+                    required
+                  />
+                </div>
               </div>
 
               {/* Technische Daten */}

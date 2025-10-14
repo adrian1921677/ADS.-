@@ -11,6 +11,8 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
+import LicensePlateInput from '@/components/LicensePlateInput'
+import VehicleMakeSelect from '@/components/VehicleMakeSelect'
  
 
 const contactSchema = z.object({
@@ -21,8 +23,9 @@ const contactSchema = z.object({
   contactMethod: z.enum(['email', 'phone']).or(z.string()).refine((v) => v === 'email' || v === 'phone', 'Bitte wählen Sie eine Kontaktmethode'),
   callWindow: z.string().optional(),
   vehicleType: z.string().min(1, 'Bitte wählen Sie einen Fahrzeugtyp'),
-  vehiclePlate: z.string().min(1, 'Bitte Kennzeichen angeben'),
-  vehicleMakeModel: z.string().min(1, 'Bitte Marke/Modell angeben'),
+  vehiclePlate: z.string().min(1, 'Bitte Kennzeichen angeben').regex(/^[A-ZÄÖÜ]{1,3}-[A-ZÄÖÜ]{1,2}\s?[0-9]{1,4}[A-ZÄÖÜ]?$/, 'Bitte gültiges deutsches Kennzeichen eingeben'),
+  vehicleMake: z.string().min(1, 'Bitte Marke angeben'),
+  vehicleModel: z.string().min(1, 'Bitte Modell angeben'),
   vehicleNotes: z.string().optional(),
   pickupStreet: z.string().min(2, 'Bitte Straße angeben'),
   pickupHouseNumber: z.string().min(1, 'Bitte Hausnummer angeben'),
@@ -249,18 +252,44 @@ export default function KontaktPage() {
                       <label htmlFor="vehiclePlate" className="block text-sm font-medium text-neutral-700 mb-2">
                         Kennzeichen * <span className="text-red-500">*</span>
                       </label>
-                      <Input id="vehiclePlate" {...register('vehiclePlate')} placeholder="z.B. B-AB 1234" className={errors.vehiclePlate ? 'border-red-500' : ''} />
+                      <LicensePlateInput
+                        value={watch('vehiclePlate') || ''}
+                        onChange={(value) => setValue('vehiclePlate', value)}
+                        placeholder="z.B. B-AB 1234"
+                        error={!!errors.vehiclePlate}
+                        required
+                      />
                       {errors.vehiclePlate && (
                         <p className="text-red-500 text-sm mt-1">{errors.vehiclePlate.message}</p>
                       )}
                     </div>
-                    <div className="md:col-span-2">
-                      <label htmlFor="vehicleMakeModel" className="block text-sm font-medium text-neutral-700 mb-2">
-                        Marke / Modell * <span className="text-red-500">*</span>
+                    <div>
+                      <label htmlFor="vehicleMake" className="block text-sm font-medium text-neutral-700 mb-2">
+                        Marke * <span className="text-red-500">*</span>
                       </label>
-                      <Input id="vehicleMakeModel" {...register('vehicleMakeModel')} placeholder="z.B. VW Golf 8" className={errors.vehicleMakeModel ? 'border-red-500' : ''} />
-                      {errors.vehicleMakeModel && (
-                        <p className="text-red-500 text-sm mt-1">{errors.vehicleMakeModel.message}</p>
+                      <VehicleMakeSelect
+                        value={watch('vehicleMake') || ''}
+                        onChange={(value) => setValue('vehicleMake', value)}
+                        placeholder="Marke wählen"
+                        error={!!errors.vehicleMake}
+                        required
+                      />
+                      {errors.vehicleMake && (
+                        <p className="text-red-500 text-sm mt-1">{errors.vehicleMake.message}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label htmlFor="vehicleModel" className="block text-sm font-medium text-neutral-700 mb-2">
+                        Modell * <span className="text-red-500">*</span>
+                      </label>
+                      <Input 
+                        id="vehicleModel" 
+                        {...register('vehicleModel')} 
+                        placeholder="z.B. Golf 8" 
+                        className={errors.vehicleModel ? 'border-red-500' : ''} 
+                      />
+                      {errors.vehicleModel && (
+                        <p className="text-red-500 text-sm mt-1">{errors.vehicleModel.message}</p>
                       )}
                     </div>
                   </div>
