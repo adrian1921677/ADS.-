@@ -186,7 +186,6 @@ export default function CarDustDemo({
 
     reqRef.current = requestAnimationFrame(frame);
     return () => { if (reqRef.current) cancelAnimationFrame(reqRef.current); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduced]);
 
   return (

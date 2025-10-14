@@ -1,5 +1,5 @@
 import { db } from './database'
-import { orders, orderNumbers, type NewOrder } from './schema'
+import { orders, orderNumbers, invoiceNumbers, type NewOrder } from './schema'
 import { eq, desc } from 'drizzle-orm'
 
 export type OrderStatus =
@@ -27,7 +27,7 @@ export interface OrderRecord {
 
 // Sequenznummer für Bestellnummern generieren
 async function generateOrderNumber(): Promise<string> {
-  const year = new Date().getFullYear()
+  const year = new Date().getFullYear().toString()
   
   // Aktuelle Sequenz für das Jahr abrufen oder erstellen
   const existing = await db
@@ -41,10 +41,10 @@ async function generateOrderNumber(): Promise<string> {
     sequence = Number(existing[0].sequence) + 1
     await db
       .update(orderNumbers)
-      .set({ sequence })
+      .set({ sequence: sequence.toString() })
       .where(eq(orderNumbers.year, year))
   } else {
-    await db.insert(orderNumbers).values({ year, sequence })
+    await db.insert(orderNumbers).values({ year, sequence: "1" })
   }
   
   return `A-${year}-${String(sequence).padStart(5, '0')}`
@@ -52,7 +52,7 @@ async function generateOrderNumber(): Promise<string> {
 
 // Sequenznummer für Rechnungsnummern generieren
 async function generateInvoiceNumber(): Promise<string> {
-  const year = new Date().getFullYear()
+  const year = new Date().getFullYear().toString()
   
   // Aktuelle Sequenz für das Jahr abrufen oder erstellen
   const existing = await db
@@ -66,10 +66,10 @@ async function generateInvoiceNumber(): Promise<string> {
     sequence = Number(existing[0].sequence) + 1
     await db
       .update(invoiceNumbers)
-      .set({ sequence })
+      .set({ sequence: sequence.toString() })
       .where(eq(invoiceNumbers.year, year))
   } else {
-    await db.insert(invoiceNumbers).values({ year, sequence })
+    await db.insert(invoiceNumbers).values({ year, sequence: "1" })
   }
   
   return `ADS-${year}-${String(sequence).padStart(5, '0')}`

@@ -31,14 +31,14 @@ export const invoices = pgTable('invoices', {
 export const invoiceNumbers = pgTable('invoice_numbers', {
   id: serial('id').primaryKey(),
   year: numeric('year', { precision: 4, scale: 0 }).notNull(),
-  sequence: numeric('sequence', { precision: 5, scale: 0 }).notNull().default(0),
+  sequence: numeric('sequence', { precision: 5, scale: 0 }).notNull().default('0'),
 })
 
 // Order Numbers Sequenz Tabelle
 export const orderNumbers = pgTable('order_numbers', {
   id: serial('id').primaryKey(),
   year: numeric('year', { precision: 4, scale: 0 }).notNull(),
-  sequence: numeric('sequence', { precision: 5, scale: 0 }).notNull().default(0),
+  sequence: numeric('sequence', { precision: 5, scale: 0 }).notNull().default('0'),
 })
 
 // Typen für TypeScript

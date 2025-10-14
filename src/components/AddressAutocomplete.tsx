@@ -150,7 +150,7 @@ export function AddressAutocomplete({
     }
   }
 
-  const handleBlur = (e: React.FocusEvent) => {
+  const handleBlur = () => {
     // Verzögere das Schließen, damit onClick funktioniert
     setTimeout(() => {
       if (!suggestionsRef.current?.contains(document.activeElement)) {

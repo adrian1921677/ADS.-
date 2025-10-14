@@ -81,7 +81,7 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
     setFormData(prev => ({
       ...prev,
       [section]: {
-        ...prev[section],
+        ...(prev[section] as Record<string, unknown> ?? {}),
         [field]: value
       }
     }))

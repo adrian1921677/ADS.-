@@ -2,7 +2,7 @@ import { ClientHeader } from '@/components/ClientHeader'
 import { Footer } from '@/components/footer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { CheckCircle, Truck, MapPin, Award, Shield, Clock, Euro, FileText } from 'lucide-react'
+import { CheckCircle, Truck, Shield, Clock, Euro, FileText } from 'lucide-react'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 

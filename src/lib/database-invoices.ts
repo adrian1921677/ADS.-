@@ -22,7 +22,7 @@ export interface InvoiceRecord {
 
 // Sequenznummer für Rechnungsnummern generieren
 async function generateInvoiceNumber(): Promise<string> {
-  const year = new Date().getFullYear()
+  const year = new Date().getFullYear().toString()
   
   // Aktuelle Sequenz für das Jahr abrufen oder erstellen
   const existing = await db
@@ -36,10 +36,10 @@ async function generateInvoiceNumber(): Promise<string> {
     sequence = Number(existing[0].sequence) + 1
     await db
       .update(invoiceNumbers)
-      .set({ sequence })
+      .set({ sequence: sequence.toString() })
       .where(eq(invoiceNumbers.year, year))
   } else {
-    await db.insert(invoiceNumbers).values({ year, sequence })
+    await db.insert(invoiceNumbers).values({ year, sequence: "1" })
   }
   
   return `ADS-${year}-${String(sequence).padStart(5, '0')}`

@@ -1,10 +1,8 @@
 import { ClientHeader } from '@/components/ClientHeader'
-import { Footer } from '@/components/footer'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { CheckCircle, Shield, Clock, MapPin, Star, Users, Award, HelpCircle } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { CheckCircle, Shield, Clock, MapPin, Star, Users, Award } from 'lucide-react'
 import Link from 'next/link'
-import Image from 'next/image'
 import type { Metadata } from 'next'
 import { ProcessStepsCarousel } from '@/components/ProcessStepsCarousel'
 

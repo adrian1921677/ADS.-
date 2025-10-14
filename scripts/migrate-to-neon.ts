@@ -86,7 +86,7 @@ async function migrateData() {
         }
         console.log(`✅ ${ordersList.length} Orders migriert`)
       }
-    } catch (error) {
+    } catch {
       console.log('⚠️ Keine Orders-Datei gefunden oder leer')
     }
 
@@ -113,7 +113,7 @@ async function migrateData() {
         }
         console.log(`✅ ${invoicesList.length} Invoices migriert`)
       }
-    } catch (error) {
+    } catch {
       console.log('⚠️ Keine Invoices-Datei gefunden oder leer')
     }
 

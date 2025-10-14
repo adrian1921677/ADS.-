@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 // removed animated title; using static logo again
 import { useState, useEffect } from 'react'
-import { Menu, X, Phone, Mail } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function Header() {
