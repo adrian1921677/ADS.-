@@ -54,6 +54,13 @@ export default function DispositionPage() {
   }
 
   function applySortFilter(orders: Order[], filters: { query: string; statusFilter: string; sortKey: string; sortDir: string }) {
+    console.log('Disposition Filter Debug:', {
+      totalOrders: orders.length,
+      statusFilter: filters.statusFilter,
+      query: filters.query,
+      orderStatuses: orders.map(o => ({ id: o.id, status: o.status, createdAt: o.createdAt }))
+    })
+
     const filtered = orders.filter(order => {
       const matchesQuery = !filters.query || 
         order.id.toLowerCase().includes(filters.query.toLowerCase()) ||
@@ -63,7 +70,24 @@ export default function DispositionPage() {
       
       const matchesStatus = !filters.statusFilter || order.status === filters.statusFilter
       
-      return matchesQuery && matchesStatus
+      const matches = matchesQuery && matchesStatus
+      
+      if (!matches && filters.statusFilter) {
+        console.log(`Order ${order.id} filtered out:`, {
+          status: order.status,
+          expectedStatus: filters.statusFilter,
+          matchesQuery,
+          matchesStatus
+        })
+      }
+      
+      return matches
+    })
+
+    console.log('Filtered orders:', {
+      before: orders.length,
+      after: filtered.length,
+      filteredIds: filtered.map(o => o.id)
     })
 
     return filtered.sort((a, b) => {
@@ -109,6 +133,11 @@ export default function DispositionPage() {
           <div className="flex items-center justify-between">
             <div className="text-sm text-gray-600">
               {loading ? 'Lade...' : showDatabaseView ? `Datenbank: ${orders.length} Aufträge (alle)` : `${orders.length} Aufträge`}
+              {statusFilter && (
+                <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                  Filter: {statusFilter}
+                </span>
+              )}
             </div>
             <div className="flex gap-2">
               <Button variant="outline" onClick={refreshOrders} title="Aktualisieren">
@@ -159,6 +188,14 @@ export default function DispositionPage() {
               <option value="angenommen">angenommen</option>
               <option value="abgelehnt">abgelehnt</option>
             </select>
+          </div>
+          
+          {/* Debug Panel */}
+          <div className="mt-4 p-3 bg-gray-50 rounded text-xs text-gray-600">
+            <strong>Debug Info:</strong> {orders.length} Aufträge geladen | 
+            Status-Filter: {statusFilter || 'keiner'} | 
+            Suche: {query || 'keine'} | 
+            Letzte Aktualisierung: {new Date().toLocaleTimeString()}
           </div>
         </div>
 
