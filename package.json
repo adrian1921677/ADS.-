@@ -12,7 +12,8 @@
     "db:migrate": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "db:seed": "tsx scripts/seed-database.ts"
+    "db:seed": "tsx scripts/seed-database.ts",
+    "vercel-build": "prisma migrate deploy && next build --turbopack"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",

@@ -9,18 +9,18 @@ export async function GET() {
   try {
     console.log(`[${rid}] Testing Neon connection with @neondatabase/serverless`)
     
-    // Prüfe DATABASE_URL Format
-    const dbUrl = process.env.DATABASE_URL
+    // Prüfe NEON_HTTP_URL Format
+    const dbUrl = process.env.NEON_HTTP_URL || process.env.DATABASE_URL
     if (!dbUrl) {
-      throw new Error('DATABASE_URL not set')
+      throw new Error('NEON_HTTP_URL not set')
     }
     
     if (!dbUrl.startsWith('postgresql://')) {
-      throw new Error('DATABASE_URL must start with postgresql:// (not postgres://)')
+      throw new Error('NEON_HTTP_URL must start with postgresql:// (not postgres://)')
     }
     
     if (dbUrl.includes('-pooler.')) {
-      throw new Error('DATABASE_URL contains -pooler which is not compatible with @neondatabase/serverless')
+      throw new Error('NEON_HTTP_URL contains -pooler which is not compatible with @neondatabase/serverless')
     }
     
     // Direkte Neon-Verbindung testen
