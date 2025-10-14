@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { X, Save, User, Car, MapPin } from 'lucide-react'
+import GoogleMapsAutocomplete from './GoogleMapsAutocomplete'
 
 interface OrderFormProps {
   onClose: () => void
@@ -23,22 +24,41 @@ interface OrderData {
     plate: string
     vin?: string
     year?: string
+    color?: string
+    fuelType?: string
+    transmission?: string
+    engineSize?: string
+    mileage?: string
   }
   pickup: {
     street: string
     houseNumber: string
     postalCode: string
     city: string
+    state?: string
+    country?: string
     date: string
     time: string
+    placeId?: string
+    coordinates?: {
+      lat: number
+      lng: number
+    }
   }
   delivery: {
     street: string
     houseNumber: string
     postalCode: string
     city: string
+    state?: string
+    country?: string
     date: string
     time: string
+    placeId?: string
+    coordinates?: {
+      lat: number
+      lng: number
+    }
   }
   notes?: string
 }
@@ -56,23 +76,42 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
       model: '',
       plate: '',
       vin: '',
-      year: ''
+      year: '',
+      color: '',
+      fuelType: '',
+      transmission: '',
+      engineSize: '',
+      mileage: ''
     },
     pickup: {
       street: '',
       houseNumber: '',
       postalCode: '',
       city: '',
+      state: '',
+      country: '',
       date: '',
-      time: ''
+      time: '',
+      placeId: '',
+      coordinates: {
+        lat: 0,
+        lng: 0
+      }
     },
     delivery: {
       street: '',
       houseNumber: '',
       postalCode: '',
       city: '',
+      state: '',
+      country: '',
       date: '',
-      time: ''
+      time: '',
+      placeId: '',
+      coordinates: {
+        lat: 0,
+        lng: 0
+      }
     },
     notes: ''
   })
@@ -83,6 +122,23 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
       [section]: {
         ...(prev[section] as Record<string, unknown> ?? {}),
         [field]: value
+      }
+    }))
+  }
+
+  const handleAddressSelect = (address: any, section: 'pickup' | 'delivery') => {
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        street: address.street || '',
+        houseNumber: address.houseNumber || '',
+        postalCode: address.postalCode || '',
+        city: address.city || '',
+        state: address.state || '',
+        country: address.country || '',
+        placeId: address.placeId || '',
+        coordinates: address.coordinates || { lat: 0, lng: 0 }
       }
     }))
   }
@@ -166,6 +222,8 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
                 <Car className="h-5 w-5 text-green-600" />
                 <h3 className="text-lg font-semibold">Fahrzeug</h3>
               </div>
+              
+              {/* Grunddaten */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Input
                   placeholder="Marke *"
@@ -185,15 +243,61 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
                   onChange={(e) => handleInputChange('vehicle', 'plate', e.target.value)}
                   required
                 />
-                <Input
-                  placeholder="VIN"
-                  value={formData.vehicle.vin}
-                  onChange={(e) => handleInputChange('vehicle', 'vin', e.target.value)}
-                />
+              </div>
+
+              {/* Technische Daten */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Input
                   placeholder="Baujahr"
                   value={formData.vehicle.year}
                   onChange={(e) => handleInputChange('vehicle', 'year', e.target.value)}
+                />
+                <Input
+                  placeholder="Farbe"
+                  value={formData.vehicle.color}
+                  onChange={(e) => handleInputChange('vehicle', 'color', e.target.value)}
+                />
+                <select
+                  className="border rounded px-3 py-2 text-sm"
+                  value={formData.vehicle.fuelType}
+                  onChange={(e) => handleInputChange('vehicle', 'fuelType', e.target.value)}
+                >
+                  <option value="">Kraftstoff</option>
+                  <option value="Benzin">Benzin</option>
+                  <option value="Diesel">Diesel</option>
+                  <option value="Elektro">Elektro</option>
+                  <option value="Hybrid">Hybrid</option>
+                  <option value="LPG">LPG</option>
+                  <option value="CNG">CNG</option>
+                </select>
+                <select
+                  className="border rounded px-3 py-2 text-sm"
+                  value={formData.vehicle.transmission}
+                  onChange={(e) => handleInputChange('vehicle', 'transmission', e.target.value)}
+                >
+                  <option value="">Getriebe</option>
+                  <option value="Schaltgetriebe">Schaltgetriebe</option>
+                  <option value="Automatik">Automatik</option>
+                  <option value="Halbautomatik">Halbautomatik</option>
+                </select>
+              </div>
+
+              {/* Zusätzliche Daten */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Input
+                  placeholder="Hubraum (z.B. 1.6L)"
+                  value={formData.vehicle.engineSize}
+                  onChange={(e) => handleInputChange('vehicle', 'engineSize', e.target.value)}
+                />
+                <Input
+                  placeholder="Kilometerstand"
+                  value={formData.vehicle.mileage}
+                  onChange={(e) => handleInputChange('vehicle', 'mileage', e.target.value)}
+                />
+                <Input
+                  placeholder="VIN/Fahrgestellnummer"
+                  value={formData.vehicle.vin}
+                  onChange={(e) => handleInputChange('vehicle', 'vin', e.target.value)}
                 />
               </div>
             </div>
@@ -204,6 +308,17 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
                 <MapPin className="h-5 w-5 text-blue-600" />
                 <h3 className="text-lg font-semibold">Abholung</h3>
               </div>
+              
+              {/* Google Maps Adresssuche */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Adresse suchen *</label>
+                <GoogleMapsAutocomplete
+                  onAddressSelect={(address) => handleAddressSelect(address, 'pickup')}
+                  placeholder="Adresse eingeben (z.B. Musterstraße 123, 12345 Musterstadt)"
+                />
+              </div>
+
+              {/* Manuelle Eingabe als Fallback */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Input
                   placeholder="Straße *"
@@ -230,6 +345,7 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
                   required
                 />
               </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   type="date"
@@ -254,6 +370,17 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
                 <MapPin className="h-5 w-5 text-green-600" />
                 <h3 className="text-lg font-semibold">Ziel</h3>
               </div>
+              
+              {/* Google Maps Adresssuche */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Adresse suchen *</label>
+                <GoogleMapsAutocomplete
+                  onAddressSelect={(address) => handleAddressSelect(address, 'delivery')}
+                  placeholder="Adresse eingeben (z.B. Musterstraße 123, 12345 Musterstadt)"
+                />
+              </div>
+
+              {/* Manuelle Eingabe als Fallback */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Input
                   placeholder="Straße *"
@@ -280,6 +407,7 @@ export default function OrderForm({ onClose, onOrderCreated }: OrderFormProps) {
                   required
                 />
               </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   type="date"
