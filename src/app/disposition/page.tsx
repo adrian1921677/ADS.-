@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 // import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Plus, RefreshCcw, FileText, Search } from 'lucide-react'
+import OrderForm from '@/components/OrderForm'
 
 interface Order {
   id: string;
@@ -25,6 +26,7 @@ export default function DispositionPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set())
   const [showDatabaseView, setShowDatabaseView] = useState(false)
+  const [showOrderForm, setShowOrderForm] = useState(false)
 
   async function refreshOrders() {
     setLoading(true)
@@ -73,6 +75,29 @@ export default function DispositionPage() {
     })
   }
 
+  const handleOrderCreated = (newOrder: Order) => {
+    setOrders(prev => [newOrder, ...prev])
+    setShowOrderForm(false)
+  }
+
+  const handleStatusUpdate = async (orderId: string, newStatus: string) => {
+    try {
+      const response = await fetch(`/api/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      })
+
+      if (response.ok) {
+        await refreshOrders()
+      }
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren des Status:', error)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
@@ -91,7 +116,7 @@ export default function DispositionPage() {
               <Button variant="outline" onClick={refreshOrders} title="Aktualisieren">
                 <RefreshCcw className="h-4 w-4" />
               </Button>
-              <Button onClick={() => setShowCreate(true)}>
+              <Button onClick={() => setShowOrderForm(true)}>
                 <Plus className="h-4 w-4 mr-2" />Auftrag erstellen
               </Button>
               <Button variant="secondary" onClick={() => setShowInvoice(true)}>
@@ -250,29 +275,45 @@ export default function DispositionPage() {
                     <div className="border-t border-gray-200 pt-6">
                       <h4 className="font-semibold text-gray-800 mb-4">Aktionen</h4>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <a 
-                          href={`mailto:${(order.payload as any)?.customer?.email || ''}?subject=Auftrag #${order.id} - Bestätigung&body=Hallo ${(order.payload as any)?.customer?.name || 'Kunde'},%0D%0A%0D%0AIhr Auftrag #${order.id} wurde angenommen und wird bearbeitet.%0D%0A%0D%0AFahrzeug: ${(order.payload as any)?.vehicle?.make || ''} ${(order.payload as any)?.vehicle?.model || ''} (${(order.payload as any)?.vehicle?.plate || ''})%0D%0A%0D%0ABei Fragen stehen wir gerne zur Verfügung.%0D%0A%0D%0AMit freundlichen Grüßen%0D%0ADas Team von Abdullahu Drive Solutions`}
+                        <Button 
+                          onClick={() => handleStatusUpdate(order.id, 'angenommen')}
                           className="flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
                         >
                           ✓ Annehmen
-                        </a>
-                        <a 
-                          href={`mailto:${(order.payload as any)?.customer?.email || ''}?subject=Auftrag #${order.id} - Absage&body=Hallo ${(order.payload as any)?.customer?.name || 'Kunde'},%0D%0A%0D%0Aleider können wir Ihren Auftrag #${order.id} nicht annehmen.%0D%0A%0D%0ABei Fragen stehen wir gerne zur Verfügung.%0D%0A%0D%0AMit freundlichen Grüßen%0D%0ADas Team von Abdullahu Drive Solutions`}
+                        </Button>
+                        <Button 
+                          onClick={() => handleStatusUpdate(order.id, 'abgelehnt')}
                           className="flex items-center justify-center gap-2 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
                         >
                           ✗ Ablehnen
-                        </a>
+                        </Button>
                         <Button 
+                          onClick={() => handleStatusUpdate(order.id, 'geplant')}
                           variant="outline" 
                           className="flex items-center justify-center gap-2 px-4 py-3 border-blue-500 text-blue-600 hover:bg-blue-50"
                         >
-                          📝 Bearbeiten
+                          📅 Planen
                         </Button>
                         <Button 
+                          onClick={() => handleStatusUpdate(order.id, 'wartend')}
                           variant="outline" 
                           className="flex items-center justify-center gap-2 px-4 py-3 border-yellow-500 text-yellow-600 hover:bg-yellow-50"
                         >
                           ⏳ Warten
+                        </Button>
+                        <Button 
+                          onClick={() => handleStatusUpdate(order.id, 'unterwegs')}
+                          variant="outline" 
+                          className="flex items-center justify-center gap-2 px-4 py-3 border-purple-500 text-purple-600 hover:bg-purple-50"
+                        >
+                          🚗 Unterwegs
+                        </Button>
+                        <Button 
+                          onClick={() => handleStatusUpdate(order.id, 'erledigt')}
+                          variant="outline" 
+                          className="flex items-center justify-center gap-2 px-4 py-3 border-gray-500 text-gray-600 hover:bg-gray-50"
+                        >
+                          ✅ Erledigt
                         </Button>
                       </div>
                     </div>
@@ -285,6 +326,14 @@ export default function DispositionPage() {
             <div className="text-sm text-gray-600">Keine Aufträge vorhanden.</div>
           )}
         </div>
+
+        {/* Order Form Modal */}
+        {showOrderForm && (
+          <OrderForm 
+            onClose={() => setShowOrderForm(false)} 
+            onOrderCreated={handleOrderCreated}
+          />
+        )}
       </div>
     </div>
   )
