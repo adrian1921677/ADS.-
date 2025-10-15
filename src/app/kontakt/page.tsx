@@ -52,7 +52,7 @@ export default function KontaktPage() {
         throw new Error(errorData.error || 'Fehler beim Senden der Nachricht')
       }
 
-      const responseData = await response.json()
+      await response.json()
       setSubmitStatus('success')
       reset()
     } catch (error) {
