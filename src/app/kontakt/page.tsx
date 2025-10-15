@@ -72,7 +72,7 @@ export default function KontaktPage() {
     {
       icon: <Mail className="h-6 w-6 text-primary-600" />,
       title: 'E-Mail',
-      details: ['info@abdullahu-drive-solutions.de', 'Antwort innerhalb 24h']
+      details: ['info@abdullahu-drive.de', 'Antwort innerhalb 24h']
     },
     {
       icon: <MapPin className="h-6 w-6 text-primary-600" />,

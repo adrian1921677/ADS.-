@@ -40,12 +40,12 @@ Diese E-Mail wurde über das Kontaktformular auf abdullahu-drive-solutions.de ge
 
     // Hier würde normalerweise ein E-Mail-Service wie Nodemailer, SendGrid, etc. verwendet werden
     // Für die Demo simulieren wir das Senden der E-Mail
-    console.log('E-Mail würde gesendet werden an: info@abdullahu-drive-solutions.de')
+    console.log('E-Mail würde gesendet werden an: info@abdullahu-drive.de')
     console.log('E-Mail-Inhalt:', emailContent)
 
     // In einer echten Implementierung würden Sie hier den E-Mail-Service aufrufen:
     // await sendEmail({
-    //   to: 'info@abdullahu-drive-solutions.de',
+    //   to: 'info@abdullahu-drive.de',
     //   subject: `Kontaktanfrage von ${name}`,
     //   text: emailContent,
     //   replyTo: email
