@@ -30,6 +30,29 @@ SMTP_PASS=ihr_16_stelliges_app_passwort
 
 ## 📧 Alternative E-Mail-Provider
 
+### Hostinger (Empfohlen für abdullahu-drive.de)
+```env
+SMTP_HOST=mail.abdullahu-drive.de
+SMTP_PORT=587
+SMTP_USER=info@abdullahu-drive.de
+SMTP_PASS=ihr_hostinger_passwort
+```
+
+**Alternative Hostinger-Konfigurationen:**
+```env
+# Option 2 (Falls Option 1 nicht funktioniert)
+SMTP_HOST=smtp.hostinger.com
+SMTP_PORT=587
+SMTP_USER=info@abdullahu-drive.de
+SMTP_PASS=ihr_passwort
+
+# Option 3 (Mit SSL)
+SMTP_HOST=mail.abdullahu-drive.de
+SMTP_PORT=465
+SMTP_USER=info@abdullahu-drive.de
+SMTP_PASS=ihr_passwort
+```
+
 ### Outlook/Hotmail
 ```env
 SMTP_HOST=smtp-mail.outlook.com

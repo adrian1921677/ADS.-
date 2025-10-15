@@ -4,10 +4,14 @@ import nodemailer from 'nodemailer'
 const transporter = nodemailer.createTransporter({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: false, // true für 465, false für andere Ports
+  secure: process.env.SMTP_PORT === '465', // true für 465, false für andere Ports
   auth: {
     user: process.env.SMTP_USER || 'info@abdullahu-drive.de',
     pass: process.env.SMTP_PASS || '', // App-Passwort oder E-Mail-Passwort
+  },
+  // Hostinger-spezifische Einstellungen
+  tls: {
+    rejectUnauthorized: false, // Für Hostinger manchmal erforderlich
   },
 })
 
