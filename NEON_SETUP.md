@@ -126,3 +126,6 @@ npm run db:migrate-data
 # Entwicklungsserver starten
 npm run dev
 ```
+
+
+

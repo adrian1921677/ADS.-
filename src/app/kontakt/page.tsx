@@ -6,46 +6,19 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Phone, Mail, MapPin, Clock, Upload, CheckCircle } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Phone, Mail, MapPin, Clock, CheckCircle } from 'lucide-react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import LicensePlateInput from '@/components/LicensePlateInput'
-import VehicleMakeSelect from '@/components/VehicleMakeSelect'
- 
 
 const contactSchema = z.object({
-  salutation: z.enum(['herr', 'frau']),
   name: z.string().min(2, 'Name muss mindestens 2 Zeichen lang sein'),
   email: z.string().email('Bitte geben Sie eine gültige E-Mail-Adresse ein'),
-  phone: z.string().min(10, 'Bitte geben Sie eine gültige Telefonnummer ein'),
-  contactMethod: z.enum(['email', 'phone']).or(z.string()).refine((v) => v === 'email' || v === 'phone', 'Bitte wählen Sie eine Kontaktmethode'),
-  callWindow: z.string().optional(),
-  vehicleType: z.string().min(1, 'Bitte wählen Sie einen Fahrzeugtyp'),
-  vehiclePlate: z.string().min(1, 'Bitte Kennzeichen angeben').regex(/^[A-ZÄÖÜ]{1,3}-[A-ZÄÖÜ]{1,2}\s?[0-9]{1,4}[A-ZÄÖÜ]?$/, 'Bitte gültiges deutsches Kennzeichen eingeben'),
-  vehicleMake: z.string().min(1, 'Bitte Marke angeben'),
-  vehicleModel: z.string().min(1, 'Bitte Modell angeben'),
-  vehicleNotes: z.string().optional(),
-  pickupStreet: z.string().min(2, 'Bitte Straße angeben'),
-  pickupHouseNumber: z.string().min(1, 'Bitte Hausnummer angeben'),
-  pickupPostalCode: z.string().regex(/^[0-9]{5}$/, 'Bitte gültige PLZ (5 Ziffern) angeben'),
-  pickupCity: z.string().min(2, 'Bitte Ort angeben'),
-  pickupDate: z.string().min(1, 'Bitte Abholdatum angeben'),
-  pickupTime: z.string().min(1, 'Bitte Abholzeit angeben'),
-  deliveryStreet: z.string().min(2, 'Bitte Straße angeben'),
-  deliveryHouseNumber: z.string().min(1, 'Bitte Hausnummer angeben'),
-  deliveryPostalCode: z.string().regex(/^[0-9]{5}$/, 'Bitte gültige PLZ (5 Ziffern) angeben'),
-  deliveryCity: z.string().min(2, 'Bitte Ort angeben'),
-  deliveryDate: z.string().optional(),
-  deliveryTime: z.string().optional(),
-  message: z.string().optional(),
+  phone: z.string().optional(),
+  subject: z.string().optional(),
+  message: z.string().min(10, 'Nachricht muss mindestens 10 Zeichen lang sein'),
   gdprConsent: z.boolean().refine(val => val === true, 'Sie müssen der Datenschutzerklärung zustimmen'),
-  newsletterConsent: z.boolean().optional(),
-}).superRefine((val, ctx) => {
-  if (val.contactMethod === 'phone' && (!val.callWindow || val.callWindow.length === 0)) {
-    ctx.addIssue({ path: ['callWindow'], code: z.ZodIssueCode.custom, message: 'Bitte Zeitfenster wählen' })
-  }
 })
 
 type ContactFormData = z.infer<typeof contactSchema>
@@ -59,128 +32,27 @@ export default function KontaktPage() {
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
-    setValue,
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
   })
-
-  const contactMethod = watch('contactMethod')
-  useEffect(() => {
-    if (contactMethod !== 'phone') {
-      setValue('callWindow', '')
-    }
-  }, [contactMethod, setValue])
-
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true)
     setSubmitStatus('idle')
 
     try {
-      // Formatiere die Daten für die API
-      const orderPayload = {
-        customer: {
-          name: data.name,
-          phone: data.phone,
-          email: data.email
-        },
-        vehicle: {
-          make: data.vehicleMake,
-          model: data.vehicleModel,
-          plate: data.vehiclePlate,
-          type: data.vehicleType,
-          notes: data.vehicleNotes
-        },
-        pickup: {
-          street: data.pickupStreet,
-          houseNumber: data.pickupHouseNumber,
-          postalCode: data.pickupPostalCode,
-          city: data.pickupCity,
-          date: data.pickupDate,
-          time: data.pickupTime
-        },
-        delivery: {
-          street: data.deliveryStreet,
-          houseNumber: data.deliveryHouseNumber,
-          postalCode: data.deliveryPostalCode,
-          city: data.deliveryCity,
-          date: data.deliveryDate,
-          time: data.deliveryTime
-        },
-        contact: {
-          method: data.contactMethod,
-          callWindow: data.callWindow
-        },
-        notes: data.message,
-        gdprConsent: data.gdprConsent,
-        newsletterConsent: data.newsletterConsent
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Fehler beim Senden der Nachricht')
       }
 
-      // Versuche zuerst die neue Neon-API, dann Fallback zur Prisma-API
-      let res
-      let apiUsed = 'neon'
-      
-      try {
-        console.log('Trying Neon API first...')
-        res = await fetch('/api/orders-neon', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            payload: orderPayload,
-            status: 'neu'
-          }),
-        })
-        
-        if (!res.ok) {
-          throw new Error(`Neon API failed: ${res.status}`)
-        }
-        
-        console.log('Neon API successful')
-      } catch (neonError) {
-        console.warn('Neon API failed, trying Prisma API:', neonError)
-        apiUsed = 'prisma'
-        
-        res = await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            payload: orderPayload,
-            status: 'neu'
-          }),
-        })
-      }
-      
-      console.log(`Using ${apiUsed} API - Response status:`, res.status)
-      console.log('Response headers:', Object.fromEntries(res.headers.entries()))
-      
-      if (!res.ok) {
-        let errorData
-        try {
-          errorData = await res.json()
-        } catch (parseError) {
-          console.error('Failed to parse error response:', parseError)
-          errorData = { error: `HTTP ${res.status}: ${res.statusText}` }
-        }
-        
-        console.error('API Error:', {
-          status: res.status,
-          statusText: res.statusText,
-          error: errorData
-        })
-        
-        throw new Error(errorData.error || `HTTP ${res.status}: ${res.statusText}`)
-      }
-      
-      const responseData = await res.json()
-      console.log('Success response:', responseData)
-      
-      // Prüfe auf Warnung (Datenbank nicht verfügbar)
-      if (responseData.warning) {
-        console.warn('Datenbank-Warnung:', responseData.warning)
-        // Zeige trotzdem Erfolg an, da der Auftrag gespeichert wurde
-      }
-      
+      const responseData = await response.json()
       setSubmitStatus('success')
       reset()
     } catch (error) {
@@ -214,18 +86,6 @@ export default function KontaktPage() {
     }
   ]
 
-  const vehicleTypes = [
-    'PKW',
-    'Kombi',
-    'SUV',
-    'Kleinwagen',
-    'Cabrio',
-    'Coupe',
-    'Limousine',
-    'Van',
-    'Sonstiges'
-  ]
-
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -248,31 +108,16 @@ export default function KontaktPage() {
           <div className="lg:col-span-2">
             <Card className="shadow-medium">
               <CardHeader className="bg-gradient-to-r from-primary-50 to-gray-50 rounded-t-xl">
-                <CardTitle className="text-3xl text-primary-600">Anfrage stellen</CardTitle>
+                <CardTitle className="text-3xl text-primary-600">Kontakt aufnehmen</CardTitle>
                 <CardDescription className="text-body">
-                  Füllen Sie das Formular aus und wir melden uns schnellstmöglich bei Ihnen.
+                  Haben Sie Fragen oder möchten Sie ein unverbindliches Angebot? Schreiben Sie uns einfach eine Nachricht.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-8">
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" aria-live="polite" aria-describedby="form-hint">
                   <span id="form-hint" className="sr-only">Alle Pflichtfelder sind mit Stern gekennzeichnet.</span>
-                  {/* Personal Information */}
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-2">Anrede *</label>
-                    <div className="flex items-center gap-6 text-sm">
-                      <label className="inline-flex items-center gap-2">
-                        <input type="radio" value="herr" {...register('salutation')} />
-                        Herr
-                      </label>
-                      <label className="inline-flex items-center gap-2">
-                        <input type="radio" value="frau" {...register('salutation')} />
-                        Frau
-                      </label>
-                    </div>
-                    {errors.salutation && (
-                      <p className="text-red-500 text-sm mt-1">Bitte Anrede wählen</p>
-                    )}
-                  </div>
+                  
+                  {/* Name und E-Mail */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-neutral-700 mb-2">
@@ -305,10 +150,11 @@ export default function KontaktPage() {
                     </div>
                   </div>
 
+                  {/* Telefon und Betreff */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium text-neutral-700 mb-2">
-                        Telefon * <span className="text-red-500">*</span>
+                        Telefon (optional)
                       </label>
                       <Input
                         id="phone"
@@ -322,226 +168,36 @@ export default function KontaktPage() {
                       )}
                     </div>
                     <div>
-                      <label htmlFor="vehicleType" className="block text-sm font-medium text-neutral-700 mb-2">
-                        Fahrzeugtyp * <span className="text-red-500">*</span>
+                      <label htmlFor="subject" className="block text-sm font-medium text-neutral-700 mb-2">
+                        Betreff (optional)
                       </label>
-                      <select
-                        id="vehicleType"
-                        {...register('vehicleType')}
-                        className={`flex h-10 w-full rounded-md border px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
-                          errors.vehicleType ? 'border-red-500' : 'border-neutral-300'
-                        }`}
-                      >
-                        <option value="">Bitte wählen</option>
-                        {vehicleTypes.map((type) => (
-                          <option key={type} value={type}>{type}</option>
-                        ))}
-                      </select>
-                      {errors.vehicleType && (
-                        <p className="text-red-500 text-sm mt-1">{errors.vehicleType.message}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Fahrzeugdaten */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label htmlFor="vehiclePlate" className="block text-sm font-medium text-neutral-700 mb-2">
-                        Kennzeichen * <span className="text-red-500">*</span>
-                      </label>
-                      <LicensePlateInput
-                        value={watch('vehiclePlate') || ''}
-                        onChange={(value) => setValue('vehiclePlate', value)}
-                        placeholder="z.B. B-AB 1234"
-                        error={!!errors.vehiclePlate}
-                        required
+                      <Input
+                        id="subject"
+                        {...register('subject')}
+                        placeholder="z.B. Angebot anfordern"
+                        className={errors.subject ? 'border-red-500' : ''}
                       />
-                      {errors.vehiclePlate && (
-                        <p className="text-red-500 text-sm mt-1">{errors.vehiclePlate.message}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label htmlFor="vehicleMake" className="block text-sm font-medium text-neutral-700 mb-2">
-                        Marke * <span className="text-red-500">*</span>
-                      </label>
-                      <VehicleMakeSelect
-                        value={watch('vehicleMake') || ''}
-                        onChange={(value) => setValue('vehicleMake', value)}
-                        placeholder="Marke wählen"
-                        error={!!errors.vehicleMake}
-                        required
-                      />
-                      {errors.vehicleMake && (
-                        <p className="text-red-500 text-sm mt-1">{errors.vehicleMake.message}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label htmlFor="vehicleModel" className="block text-sm font-medium text-neutral-700 mb-2">
-                        Modell * <span className="text-red-500">*</span>
-                      </label>
-                      <Input 
-                        id="vehicleModel" 
-                        {...register('vehicleModel')} 
-                        placeholder="z.B. Golf 8" 
-                        className={errors.vehicleModel ? 'border-red-500' : ''} 
-                      />
-                      {errors.vehicleModel && (
-                        <p className="text-red-500 text-sm mt-1">{errors.vehicleModel.message}</p>
+                      {errors.subject && (
+                        <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
                       )}
                     </div>
                   </div>
 
-                  {/* Kontaktpräferenz */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-neutral-700 mb-2">Bevorzugte Kontaktmethode *</label>
-                      <div className="flex items-center gap-6 text-sm">
-                        <label className="inline-flex items-center gap-2">
-                          <input type="radio" value="email" {...register('contactMethod')} />
-                          E-Mail
-                        </label>
-                        <label className="inline-flex items-center gap-2">
-                          <input type="radio" value="phone" {...register('contactMethod')} />
-                          Telefon
-                        </label>
-                      </div>
-                      {errors.contactMethod && (
-                        <p className="text-red-500 text-sm mt-1">{errors.contactMethod.message as string}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-neutral-700 mb-2">Gewünschtes Zeitfenster (bei Telefon)</label>
-                      <select
-                        {...register('callWindow')}
-                        disabled={contactMethod !== 'phone'}
-                        className={`flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 ${errors.callWindow ? 'border-red-500' : 'border-neutral-300'} ${contactMethod !== 'phone' ? 'bg-neutral-100 cursor-not-allowed text-neutral-500' : ''}`}
-                      >
-                        <option value="">Bitte wählen</option>
-                        {[
-                          '08:00 - 10:00',
-                          '10:00 - 12:00',
-                          '12:00 - 14:00',
-                          '14:00 - 16:00',
-                          '16:00 - 18:00',
-                          '18:00 - 20:00',
-                        ].map((slot) => (
-                          <option key={slot} value={slot}>{slot}</option>
-                        ))}
-                      </select>
-                      <p className="text-neutral-500 text-xs mt-1">Nur relevant, wenn wir Sie telefonisch erreichen sollen.</p>
-                      {errors.callWindow && (
-                        <p className="text-red-500 text-sm mt-1">{errors.callWindow.message as string}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Transport Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="border rounded-lg p-4 bg-neutral-50">
-                      <div className="text-sm font-semibold text-neutral-700 mb-2">Abholung</div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="md:col-span-2">
-                          <label htmlFor="pickupStreet" className="block text-sm font-medium text-neutral-700 mb-2">Straße *</label>
-                          <Input id="pickupStreet" {...register('pickupStreet')} placeholder="z.B. Musterstraße" className={errors.pickupStreet ? 'border-red-500' : ''} />
-                          {errors.pickupStreet && (<p className="text-red-500 text-sm mt-1">{errors.pickupStreet.message}</p>)}
-                        </div>
-                        <div>
-                          <label htmlFor="pickupHouseNumber" className="block text-sm font-medium text-neutral-700 mb-2">Nr. *</label>
-                          <Input id="pickupHouseNumber" {...register('pickupHouseNumber')} placeholder="z.B. 12a" className={errors.pickupHouseNumber ? 'border-red-500' : ''} />
-                          {errors.pickupHouseNumber && (<p className="text-red-500 text-sm mt-1">{errors.pickupHouseNumber.message}</p>)}
-                        </div>
-                        <div>
-                          <label htmlFor="pickupPostalCode" className="block text-sm font-medium text-neutral-700 mb-2">PLZ *</label>
-                          <Input id="pickupPostalCode" {...register('pickupPostalCode')} placeholder="z.B. 10115" className={errors.pickupPostalCode ? 'border-red-500' : ''} />
-                          {errors.pickupPostalCode && (<p className="text-red-500 text-sm mt-1">{errors.pickupPostalCode.message}</p>)}
-                        </div>
-                        <div className="md:col-span-2">
-                          <label htmlFor="pickupCity" className="block text-sm font-medium text-neutral-700 mb-2">Ort *</label>
-                          <Input id="pickupCity" {...register('pickupCity')} placeholder="z.B. Berlin" className={errors.pickupCity ? 'border-red-500' : ''} />
-                          {errors.pickupCity && (<p className="text-red-500 text-sm mt-1">{errors.pickupCity.message}</p>)}
-                        </div>
-                        <div>
-                          <label htmlFor="pickupDate" className="block text-sm font-medium text-neutral-700 mb-2">Datum *</label>
-                          <Input id="pickupDate" type="date" {...register('pickupDate')} className={errors.pickupDate ? 'border-red-500' : ''} />
-                          {errors.pickupDate && (<p className="text-red-500 text-sm mt-1">{errors.pickupDate.message}</p>)}
-                        </div>
-                        <div>
-                          <label htmlFor="pickupTime" className="block text-sm font-medium text-neutral-700 mb-2">Uhrzeit *</label>
-                          <Input id="pickupTime" type="time" {...register('pickupTime')} className={errors.pickupTime ? 'border-red-500' : ''} />
-                          {errors.pickupTime && (<p className="text-red-500 text-sm mt-1">{errors.pickupTime.message}</p>)}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="border rounded-lg p-4 bg-neutral-50">
-                      <div className="text-sm font-semibold text-neutral-700 mb-2">Ziel</div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="md:col-span-2">
-                          <label htmlFor="deliveryStreet" className="block text-sm font-medium text-neutral-700 mb-2">Straße *</label>
-                          <Input id="deliveryStreet" {...register('deliveryStreet')} placeholder="z.B. Beispielallee" className={errors.deliveryStreet ? 'border-red-500' : ''} />
-                          {errors.deliveryStreet && (<p className="text-red-500 text-sm mt-1">{errors.deliveryStreet.message}</p>)}
-                        </div>
-                        <div>
-                          <label htmlFor="deliveryHouseNumber" className="block text-sm font-medium text-neutral-700 mb-2">Nr. *</label>
-                          <Input id="deliveryHouseNumber" {...register('deliveryHouseNumber')} placeholder="z.B. 7" className={errors.deliveryHouseNumber ? 'border-red-500' : ''} />
-                          {errors.deliveryHouseNumber && (<p className="text-red-500 text-sm mt-1">{errors.deliveryHouseNumber.message}</p>)}
-                        </div>
-                        <div>
-                          <label htmlFor="deliveryPostalCode" className="block text-sm font-medium text-neutral-700 mb-2">PLZ *</label>
-                          <Input id="deliveryPostalCode" {...register('deliveryPostalCode')} placeholder="z.B. 80331" className={errors.deliveryPostalCode ? 'border-red-500' : ''} />
-                          {errors.deliveryPostalCode && (<p className="text-red-500 text-sm mt-1">{errors.deliveryPostalCode.message}</p>)}
-                        </div>
-                        <div className="md:col-span-2">
-                          <label htmlFor="deliveryCity" className="block text-sm font-medium text-neutral-700 mb-2">Ort *</label>
-                          <Input id="deliveryCity" {...register('deliveryCity')} placeholder="z.B. München" className={errors.deliveryCity ? 'border-red-500' : ''} />
-                          {errors.deliveryCity && (<p className="text-red-500 text-sm mt-1">{errors.deliveryCity.message}</p>)}
-                        </div>
-                        <div>
-                          <label htmlFor="deliveryDate" className="block text-sm font-medium text-neutral-700 mb-2">Datum (optional)</label>
-                          <Input id="deliveryDate" type="date" {...register('deliveryDate')} className={errors.deliveryDate ? 'border-red-500' : ''} />
-                          {errors.deliveryDate && (<p className="text-red-500 text-sm mt-1">{errors.deliveryDate.message}</p>)}
-                        </div>
-                        <div>
-                          <label htmlFor="deliveryTime" className="block text-sm font-medium text-neutral-700 mb-2">Uhrzeit (optional)</label>
-                          <Input id="deliveryTime" type="time" {...register('deliveryTime')} className={errors.deliveryTime ? 'border-red-500' : ''} />
-                          {errors.deliveryTime && (<p className="text-red-500 text-sm mt-1">{errors.deliveryTime.message}</p>)}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  
-
+                  {/* Nachricht */}
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-neutral-700 mb-2">
-                      Besonderheiten / Notizen
+                      Nachricht * <span className="text-red-500">*</span>
                     </label>
                     <Textarea
                       id="message"
-                      {...register('vehicleNotes')}
-                      placeholder="Besonderheiten (z.B. tiefergelegt, sehr niedrig, defekt, etc.)"
-                      rows={4}
+                      {...register('message')}
+                      placeholder="Beschreiben Sie Ihr Anliegen oder stellen Sie Ihre Fragen..."
+                      rows={6}
+                      className={errors.message ? 'border-red-500' : ''}
                     />
-                  </div>
-
-                  {/* File Upload */}
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-2">
-                      Fahrzeugdokumente (optional)
-                    </label>
-                    <div className="border-2 border-dashed border-neutral-300 rounded-lg p-6 text-center">
-                      <Upload className="h-8 w-8 text-neutral-400 mx-auto mb-2" />
-                      <p className="text-sm text-neutral-600">
-                        Fahrzeugbrief, Fotos oder andere relevante Dokumente hier hochladen
-                      </p>
-                      <input
-                        type="file"
-                        multiple
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        className="mt-2 text-sm text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
-                      />
-                    </div>
+                    {errors.message && (
+                      <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
+                    )}
                   </div>
 
                   {/* GDPR Consent */}
@@ -564,18 +220,6 @@ export default function KontaktPage() {
                     {errors.gdprConsent && (
                       <p className="text-red-500 text-sm">{errors.gdprConsent.message}</p>
                     )}
-
-                    <div className="flex items-start space-x-3">
-                      <input
-                        type="checkbox"
-                        id="newsletterConsent"
-                        {...register('newsletterConsent')}
-                        className="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded"
-                      />
-                      <label htmlFor="newsletterConsent" className="text-sm text-neutral-700">
-                        Ich möchte über Neuigkeiten und Angebote per E-Mail informiert werden.
-                      </label>
-                    </div>
                   </div>
 
                   {/* Submit Button */}
@@ -586,7 +230,7 @@ export default function KontaktPage() {
                       className="w-full"
                       disabled={isSubmitting}
                     >
-                      {isSubmitting ? 'Wird gesendet...' : 'Anfrage senden'}
+                      {isSubmitting ? 'Wird gesendet...' : 'Nachricht senden'}
                     </Button>
                   </div>
 
@@ -596,7 +240,7 @@ export default function KontaktPage() {
                       <div className="flex items-center">
                         <CheckCircle className="h-5 w-5 text-green-400 mr-2" />
                         <p className="text-green-800">
-                          Vielen Dank! Ihre Anfrage wurde erfolgreich gesendet. Wir melden uns schnellstmöglich bei Ihnen.
+                          Vielen Dank! Ihre Nachricht wurde erfolgreich gesendet. Wir melden uns schnellstmöglich bei Ihnen.
                         </p>
                       </div>
                     </div>
