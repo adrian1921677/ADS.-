@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendContactEmail } from '@/lib/email'
+import { Resend } from 'resend'
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,17 +25,57 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Echte E-Mail senden
+    // E-Mail mit Resend senden
     try {
-      await sendContactEmail({
-        name,
-        email,
-        phone,
-        subject,
-        message
+      const { data, error } = await resend.emails.send({
+        from: 'Abdullahu Drive Solutions <info@abdullahu-drive.de>',
+        to: 'info@abdullahu-drive.de',
+        replyTo: email,
+        subject: `Kontaktanfrage von ${name}${subject ? ` - ${subject}` : ''}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #2563eb;">Neue Kontaktanfrage von der Website</h2>
+            
+            <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <p><strong>Name:</strong> ${name}</p>
+              <p><strong>E-Mail:</strong> ${email}</p>
+              <p><strong>Telefon:</strong> ${phone || 'Nicht angegeben'}</p>
+              <p><strong>Betreff:</strong> ${subject || 'Allgemeine Anfrage'}</p>
+            </div>
+            
+            <div style="background-color: #ffffff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+              <h3 style="color: #374151; margin-top: 0;">Nachricht:</h3>
+              <p style="white-space: pre-wrap; line-height: 1.6;">${message}</p>
+            </div>
+            
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;">
+            <p style="color: #6b7280; font-size: 12px;">
+              Diese E-Mail wurde über das Kontaktformular auf abdullahu-drive-solutions.de gesendet.
+            </p>
+          </div>
+        `,
+        text: `
+Neue Kontaktanfrage von der Website:
+
+Name: ${name}
+E-Mail: ${email}
+Telefon: ${phone || 'Nicht angegeben'}
+Betreff: ${subject || 'Allgemeine Anfrage'}
+
+Nachricht:
+${message}
+
+---
+Diese E-Mail wurde über das Kontaktformular auf abdullahu-drive-solutions.de gesendet.
+        `.trim(),
       })
 
-      console.log('E-Mail erfolgreich an info@abdullahu-drive.de gesendet')
+      if (error) {
+        console.error('Resend-Fehler:', error)
+        throw new Error(`E-Mail konnte nicht gesendet werden: ${error.message}`)
+      }
+
+      console.log('E-Mail erfolgreich mit Resend gesendet:', data?.id)
       
       return NextResponse.json(
         { 
