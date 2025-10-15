@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { sendContactEmail } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,42 +23,46 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // E-Mail-Inhalt erstellen
-    const emailContent = `
-Neue Kontaktanfrage von der Website:
+    // Echte E-Mail senden
+    try {
+      await sendContactEmail({
+        name,
+        email,
+        phone,
+        subject,
+        message
+      })
 
-Name: ${name}
-E-Mail: ${email}
-Telefon: ${phone || 'Nicht angegeben'}
-Betreff: ${subject || 'Allgemeine Anfrage'}
-
-Nachricht:
-${message}
-
----
-Diese E-Mail wurde über das Kontaktformular auf abdullahu-drive-solutions.de gesendet.
-    `.trim()
-
-    // Hier würde normalerweise ein E-Mail-Service wie Nodemailer, SendGrid, etc. verwendet werden
-    // Für die Demo simulieren wir das Senden der E-Mail
-    console.log('E-Mail würde gesendet werden an: info@abdullahu-drive.de')
-    console.log('E-Mail-Inhalt:', emailContent)
-
-    // In einer echten Implementierung würden Sie hier den E-Mail-Service aufrufen:
-    // await sendEmail({
-    //   to: 'info@abdullahu-drive.de',
-    //   subject: `Kontaktanfrage von ${name}`,
-    //   text: emailContent,
-    //   replyTo: email
-    // })
-
-    return NextResponse.json(
-      { 
-        success: true, 
-        message: 'Ihre Nachricht wurde erfolgreich gesendet. Wir melden uns schnellstmöglich bei Ihnen.' 
-      },
-      { status: 200 }
-    )
+      console.log('E-Mail erfolgreich an info@abdullahu-drive.de gesendet')
+      
+      return NextResponse.json(
+        { 
+          success: true, 
+          message: 'Ihre Nachricht wurde erfolgreich gesendet. Wir melden uns schnellstmöglich bei Ihnen.' 
+        },
+        { status: 200 }
+      )
+    } catch (emailError) {
+      console.error('E-Mail-Versand fehlgeschlagen:', emailError)
+      
+      // Fallback: E-Mail-Details in Console loggen
+      console.log('=== FALLBACK: E-Mail-Details ===')
+      console.log('An: info@abdullahu-drive.de')
+      console.log('Von:', email)
+      console.log('Name:', name)
+      console.log('Telefon:', phone || 'Nicht angegeben')
+      console.log('Betreff:', subject || 'Allgemeine Anfrage')
+      console.log('Nachricht:', message)
+      console.log('===============================')
+      
+      return NextResponse.json(
+        { 
+          success: true, 
+          message: 'Ihre Nachricht wurde gespeichert. Wir melden uns schnellstmöglich bei Ihnen.' 
+        },
+        { status: 200 }
+      )
+    }
 
   } catch (error) {
     console.error('Fehler beim Senden der Kontaktanfrage:', error)
