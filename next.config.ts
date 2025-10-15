@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  // Hilft Turbopack bei ESM/TS-Paketen
+  transpilePackages: ['@react-email/render', '@react-email/components', 'react-email'],
   async headers() {
     return [
       {
