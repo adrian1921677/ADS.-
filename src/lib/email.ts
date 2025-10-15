@@ -12,7 +12,12 @@ const transporter = nodemailer.createTransport({
   // Hostinger-spezifische Einstellungen
   tls: {
     rejectUnauthorized: false, // Für Hostinger manchmal erforderlich
+    ciphers: 'SSLv3'
   },
+  // Zusätzliche Hostinger-Konfiguration
+  connectionTimeout: 60000, // 60 Sekunden
+  greetingTimeout: 30000,   // 30 Sekunden
+  socketTimeout: 60000,     // 60 Sekunden
 })
 
 export interface EmailData {
@@ -25,6 +30,11 @@ export interface EmailData {
 
 export async function sendContactEmail(data: EmailData) {
   try {
+    // Verbindung testen
+    console.log('Teste E-Mail-Verbindung...')
+    await transporter.verify()
+    console.log('E-Mail-Verbindung erfolgreich!')
+
     const mailOptions = {
       from: `"Abdullahu Drive Solutions" <${process.env.SMTP_USER || 'info@abdullahu-drive.de'}>`,
       to: 'info@abdullahu-drive.de',
@@ -68,11 +78,33 @@ Diese E-Mail wurde über das Kontaktformular auf abdullahu-drive-solutions.de ge
       `,
     }
 
+    console.log('Sende E-Mail...')
+    console.log('SMTP-Konfiguration:', {
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      user: process.env.SMTP_USER,
+      hasPassword: !!process.env.SMTP_PASS
+    })
+
     const result = await transporter.sendMail(mailOptions)
     console.log('E-Mail erfolgreich gesendet:', result.messageId)
     return { success: true, messageId: result.messageId }
   } catch (error) {
-    console.error('Fehler beim Senden der E-Mail:', error)
-    throw new Error('E-Mail konnte nicht gesendet werden')
+    console.error('Detaillierter E-Mail-Fehler:', error)
+    console.error('Fehler-Typ:', error.constructor.name)
+    console.error('Fehler-Message:', error.message)
+    console.error('Fehler-Code:', error.code)
+    
+    // Fallback: E-Mail-Details in Console loggen
+    console.log('=== FALLBACK: E-Mail-Details ===')
+    console.log('An: info@abdullahu-drive.de')
+    console.log('Von:', data.email)
+    console.log('Name:', data.name)
+    console.log('Telefon:', data.phone || 'Nicht angegeben')
+    console.log('Betreff:', data.subject || 'Allgemeine Anfrage')
+    console.log('Nachricht:', data.message)
+    console.log('===============================')
+    
+    throw new Error(`E-Mail konnte nicht gesendet werden: ${error.message}`)
   }
 }
