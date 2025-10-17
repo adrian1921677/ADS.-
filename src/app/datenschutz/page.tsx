@@ -55,12 +55,12 @@ export default function DatenschutzPage() {
               <CardContent>
                 <div className="space-y-2">
                   <p className="text-neutral-600">Abdullahu Drive Solutions</p>
-                  <p className="text-neutral-600">Musterstraße 123</p>
-                  <p className="text-neutral-600">12345 Musterstadt</p>
+                  <p className="text-neutral-600">Alhausstraße 35</p>
+                  <p className="text-neutral-600">42281 Wuppertal</p>
                   <p className="text-neutral-600">Deutschland</p>
                   <br />
-                  <p className="text-neutral-600">Telefon: +49 20287021547</p>
-                  <p className="text-neutral-600">E-Mail: info@abdullahu-drive-solutions.de</p>
+                  <p className="text-neutral-600">Telefon: +49 160 4245116</p>
+                  <p className="text-neutral-600">E-Mail: info@abdullahu-drive.de</p>
                 </div>
               </CardContent>
             </Card>
@@ -226,8 +226,8 @@ export default function DatenschutzPage() {
                   Bei Fragen zum Datenschutz wenden Sie sich bitte an:
                 </p>
                 <div className="mt-4 space-y-1">
-                  <p className="text-neutral-600">E-Mail: datenschutz@abdullahu-drive-solutions.de</p>
-                  <p className="text-neutral-600">Telefon: +49 20287021547</p>
+                  <p className="text-neutral-600">E-Mail: datenschutz@abdullahu-drive.de</p>
+                  <p className="text-neutral-600">Telefon: +49 160 4245116</p>
                 </div>
               </CardContent>
             </Card>

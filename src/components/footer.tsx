@@ -33,19 +33,19 @@ export function Footer() {
                 <div className="p-2 bg-red-500/20 rounded-lg">
                   <Phone className="h-4 w-4 text-red-400" />
                 </div>
-                <span className="font-medium text-white">+49 20287021547</span>
+                <span className="font-medium text-white">+49 160 4245116</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-red-500/20 rounded-lg">
                   <Mail className="h-4 w-4 text-red-400" />
                 </div>
-                <span className="font-medium text-white">info@abdullahu-drive-solutions.de</span>
+                <span className="font-medium text-white">info@abdullahu-drive.de</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-red-500/20 rounded-lg">
                   <MapPin className="h-4 w-4 text-red-400" />
                 </div>
-                <span className="text-white">Musterstraße 123, 12345 Musterstadt</span>
+                <span className="text-white">Alhausstraße 35, 42281 Wuppertal</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-red-500/20 rounded-lg">

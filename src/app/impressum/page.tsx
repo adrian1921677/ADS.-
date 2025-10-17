@@ -39,8 +39,8 @@ export default function ImpressumPage() {
                 <div>
                   <h4 className="font-semibold text-neutral-900 mb-2">Anschrift:</h4>
                   <p className="text-neutral-600">
-                    Musterstraße 123<br />
-                    12345 Musterstadt<br />
+                    Alhausstraße 35<br />
+                    42281 Wuppertal<br />
                     Deutschland
                   </p>
                 </div>
@@ -48,8 +48,8 @@ export default function ImpressumPage() {
                 <div>
                   <h4 className="font-semibold text-neutral-900 mb-2">Kontakt:</h4>
                   <p className="text-neutral-600">
-                    Telefon: +49 20287021547<br />
-                    E-Mail: info@abdullahu-drive-solutions.de
+                    Telefon: +49 160 4245116<br />
+                    E-Mail: info@abdullahu-drive.de
                   </p>
                 </div>
               </CardContent>

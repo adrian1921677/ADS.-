@@ -12,7 +12,7 @@ export default function KontaktPage() {
     {
       icon: <Phone className="h-6 w-6 text-primary-600" />,
       title: 'Telefon',
-      details: ['+49 20287021547', 'Mo-Fr: 8:00-18:00', 'Sa: 9:00-14:00']
+      details: ['+49 160 4245116', 'Mo-Fr: 8:00-18:00']
     },
     {
       icon: <Mail className="h-6 w-6 text-primary-600" />,
@@ -22,12 +22,12 @@ export default function KontaktPage() {
     {
       icon: <MapPin className="h-6 w-6 text-primary-600" />,
       title: 'Adresse',
-      details: ['Musterstraße 123', '12345 Musterstadt', 'Deutschland']
+      details: ['Alhausstraße 35', '42281 Wuppertal', 'Deutschland']
     },
     {
       icon: <Clock className="h-6 w-6 text-primary-600" />,
       title: 'Bürozeiten',
-      details: ['Montag - Freitag: 8:00 - 18:00', 'Samstag: 9:00 - 14:00', 'Sonntag: Geschlossen']
+      details: ['Montag - Freitag: 8:00 - 18:00', 'Samstag: Geschlossen', 'Sonntag: Geschlossen']
     }
   ]
 

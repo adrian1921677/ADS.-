@@ -110,13 +110,13 @@ export default function FAQPage() {
     {
       icon: <Phone className="h-6 w-6 text-primary-600" />,
       title: 'Telefon',
-      details: ['+49 20287021547', 'Mo-Fr: 8:00-18:00', 'Sa: 9:00-14:00'],
+      details: ['+49 160 4245116', 'Mo-Fr: 8:00-18:00'],
       action: 'Jetzt anrufen'
     },
     {
       icon: <Mail className="h-6 w-6 text-primary-600" />,
       title: 'E-Mail',
-      details: ['info@abdullahu-drive-solutions.de', 'Antwort innerhalb 24h'],
+      details: ['info@abdullahu-drive.de', 'Antwort innerhalb 24h'],
       action: 'E-Mail senden'
     },
     {
