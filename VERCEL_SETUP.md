@@ -49,3 +49,5 @@ RESEND_API_KEY=re_8cVAyhQw_KARiqpteYzvV8AhcHHQS6fUb
 - **Niemals** API-Keys in Git committen
 - **Immer** Environment Variables für Produktion verwenden
 - **Testen** Sie nach jeder Änderung das Kontaktformular
+
+

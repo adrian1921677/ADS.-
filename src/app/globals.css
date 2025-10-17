@@ -163,13 +163,16 @@
     font-size: clamp(3.75rem, 7.5vw, 6.5rem);
     line-height: 1.05;
     font-weight: 800;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    position: relative;
+    z-index: 10;
   }
 
   /* Handschriftliche Unterstreichung */
   .handwritten-underline {
     position: relative;
     display: inline-block;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
   }
 
   .handwritten-underline::after {
@@ -557,5 +560,43 @@
   @keyframes orbit-spin {
     from { transform: translate(-50%, -50%) rotate(0deg) translateX(calc(var(--orbit-size,56px) / 2)); }
     to   { transform: translate(-50%, -50%) rotate(360deg) translateX(calc(var(--orbit-size,56px) / 2)); }
+  }
+
+  /* Hero Section mit Hyperspeed Background */
+  .hero-section {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+  }
+
+  .hero-text-line {
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    position: relative;
+    z-index: 10;
+  }
+
+  .mobile-ab-container {
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    position: relative;
+    z-index: 10;
+  }
+
+  .mobile-nach {
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    position: relative;
+    z-index: 10;
+  }
+
+  .usp-chip {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    position: relative;
+    z-index: 10;
   }
 }

@@ -5,6 +5,8 @@ import { CheckCircle, Shield, Clock, MapPin, Star, Users, Award } from 'lucide-r
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { ProcessStepsCarousel } from '@/components/ProcessStepsCarousel'
+import Hyperspeed from '@/components/Hyperspeed'
+import { hyperspeedPresets } from '@/components/hyperspeedPresets'
 
 export const metadata: Metadata = {
   title: 'Abdullahu Drive Solutions – Abholung & Zustellung deutschlandweit',
@@ -91,8 +93,28 @@ export default function HomePage() {
       
       {/* Hero Section – reduziert und professionell */}
       {/* Hero Section */}
-      <section className="relative text-white overflow-hidden py-24 bg-gradient-to-br from-[#0C2A3A] to-[#102538]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="hero-section relative text-white overflow-hidden py-24 bg-gradient-to-br from-[#0C2A3A] to-[#102538]">
+        {/* Hyperspeed Background */}
+        <div className="absolute inset-0 z-0">
+          <Hyperspeed
+            effectOptions={{
+              ...hyperspeedPresets.one,
+              colors: {
+                roadColor: 0x080808,
+                islandColor: 0x0a0a0a,
+                background: 0x000000,
+                shoulderLines: 0x131318,
+                brokenLines: 0x131318,
+                leftCars: [0xd856bf, 0x6750a2, 0xc247ac],
+                rightCars: [0x03b3c3, 0x0e5ea5, 0x324555],
+                sticks: 0x03b3c3
+              }
+            }}
+          />
+        </div>
+        
+        {/* Content */}
+        <div className="hero-content relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="hero-title text-white">
             <div className="hero-text-line">Sicher & zuverlässig von</div>
             <div className="mobile-ab-container">

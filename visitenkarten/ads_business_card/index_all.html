@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alle Visitenkarten – Abdullahu Drive Solutions</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin: 32px 0;
+    }
+    .card-preview {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(12,42,58,0.08);
+      border: 1px solid var(--gray-300);
+      text-align: center;
+    }
+    .card-preview h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .card-preview p {
+      color: var(--gray-500);
+      font-size: 14px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .card-preview .preview-image {
+      width: 100%;
+      max-width: 200px;
+      height: 120px;
+      background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-300) 100%);
+      border-radius: 8px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--gray-500);
+      border: 2px dashed var(--gray-300);
+    }
+    .card-preview .btn {
+      display: inline-block;
+      background: var(--red);
+      color: var(--white);
+      padding: 8px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+    .card-preview .btn:hover {
+      background: var(--red-light);
+      transform: translateY(-1px);
+    }
+    .features {
+      background: var(--gray-100);
+      padding: 20px;
+      border-radius: 12px;
+      margin: 32px 0;
+    }
+    .features h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--white);
+      border-radius: 8px;
+      border: 1px solid var(--gray-300);
+    }
+    .feature-item .icon {
+      width: 24px;
+      height: 24px;
+      background: var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .feature-item .text {
+      font-size: 14px;
+      color: var(--navy);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header no-print">
+    <h1>Abdullahu Drive Solutions – Visitenkarten Übersicht</h1>
+    <p>Alle verfügbaren Visitenkarten-Varianten für Ihr Team</p>
+  </header>
+
+  <div class="overview-grid">
+    <div class="card-preview">
+      <h3>Standard Visitenkarten</h3>
+      <p>Klassische Visitenkarten für Adrian (Inhaber) und Dirk (Fahrer) mit allen wichtigen Kontaktdaten.</p>
+      <div class="preview-image">
+        Adrian & Dirk<br>
+        Standard Design
+      </div>
+      <a href="index.html" class="btn">Anzeigen & Drucken</a>
+    </div>
+
+    <div class="card-preview">
+      <h3>Dirk Spezial</h3>
+      <p>Erweiterte Visitenkarte für Dirk mit detaillierter Auflistung seiner Transportleistungen.</p>
+      <div class="preview-image">
+        Dirk<br>
+        Spezial Design
+      </div>
+      <a href="dirk_special.html" class="btn">Anzeigen & Drucken</a>
+    </div>
+  </div>
+
+  <div class="features">
+    <h3>Visitenkarten Features</h3>
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="icon">✓</div>
+        <div class="text">Korrekte Kontaktdaten (Telefon, E-Mail, Website)</div>
+      </div>
+      <div class="feature-item">
+        <div class="icon">✓</div>
+        <div class="text">Professionelles Design mit Firmenlogo</div>
+      </div>
+      <div class="feature-item">
+        <div class="icon">✓</div>
+        <div class="text">Optimiert für A4-Druck (2 Karten pro Seite)</div>
+      </div>
+      <div class="feature-item">
+        <div class="icon">✓</div>
+        <div class="text">Vorder- und Rückseite in einem Dokument</div>
+      </div>
+      <div class="feature-item">
+        <div class="icon">✓</div>
+        <div class="text">Bürozeiten und Verfügbarkeit</div>
+      </div>
+      <div class="feature-item">
+        <div class="icon">✓</div>
+        <div class="text">Responsive Design für alle Geräte</div>
+      </div>
+      <div class="feature-item">
+        <div class="icon">✓</div>
+        <div class="text">Moderne Farben und Typografie</div>
+      </div>
+      <div class="feature-item">
+        <div class="icon">✓</div>
+        <div class="text">Hover-Effekte und Animationen</div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="no-print">
+    <button onclick="window.print()">🖨️ Alle drucken</button>
+    <p class="print-info">Wählen Sie die gewünschte Visitenkarten-Variante aus und drucken Sie sie aus</p>
+  </footer>
+</body>
+</html>
