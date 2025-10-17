@@ -48,9 +48,15 @@ export async function POST(req: Request) {
 
     const resend = new Resend(RESEND_API_KEY);
     const to = process.env.CONTACT_TO ?? "info@abdullahu-drive.de";
+    const from = process.env.CONTACT_FROM ?? "Kontaktformular <noreply@updates.abdullahu-drive.de>";
+
+    // Sicherheitscheck für verifizierte Domain
+    if (!/@updates\.abdullahu-drive\.de>?$/.test(from)) {
+      throw new Error('FROM muss @updates.abdullahu-drive.de sein');
+    }
 
     const res = await resend.emails.send({
-      from: "Abdullahu Drive Solutions <noreply@abdullahu-drive.de>", // Domain in Resend verifizieren
+      from,
       to,
       subject: `Neue Angebotsanfrage von ${data.name}`,
       replyTo: data.email,

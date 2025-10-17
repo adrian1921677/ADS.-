@@ -15,11 +15,17 @@ async function sendOrderEmail(params: {
   isFallback?: boolean
 }) {
   const to = params.to ?? process.env.CONTACT_TO ?? 'info@abdullahu-drive.de'
-  const from = 'Kontaktformular <noreply@updates.abdullahu-drive.de>' // verifizierte Subdomain!
+  const from = process.env.CONTACT_FROM ?? 'Kontaktformular <noreply@updates.abdullahu-drive.de>'
 
   // Key vorhanden?
   if (!process.env.RESEND_API_KEY) {
     console.error('[email] RESEND_API_KEY fehlt – Mail wird übersprungen')
+    return
+  }
+
+  // Sicherheitscheck für verifizierte Domain
+  if (!/@updates\.abdullahu-drive\.de>?$/.test(from)) {
+    console.error('[email] FROM muss @updates.abdullahu-drive.de sein:', from)
     return
   }
 

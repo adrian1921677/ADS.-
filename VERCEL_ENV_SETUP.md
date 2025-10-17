@@ -1,119 +1,120 @@
-# 🔧 Vercel Environment Variables Setup
+# Vercel Environment Variables Setup
 
-## Problem gelöst: Config-Mischmasch + fehlende Migrationen
+## 🚨 WICHTIG: Domain-Verifizierung
 
-Das Kontaktformular funktioniert nicht, weil:
-- **Prisma** braucht **Pooler-URL** mit `pgbouncer=true`
-- **Neon HTTP** braucht **direkte URL** ohne `-pooler`
-- **Eine einzige DATABASE_URL** kann nicht beide bedienen
-- **Migrationen** laufen nicht in Production
+**Alle E-Mails müssen von der verifizierten Subdomain `@updates.abdullahu-drive.de` gesendet werden!**
 
-## ✅ Lösung: Zwei separate ENV-Variablen
+## 📧 Environment Variables (Vercel)
 
-### 1. Vercel Dashboard → Project → Settings → Environment Variables
+### Vercel Dashboard → Project Settings → Environment Variables:
 
-#### **DATABASE_URL** (für Prisma mit Pooler):
-```
-postgresql://neondb_owner:DEIN_NEUES_PASSWORT@ep-lucky-river-ag110etn-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&pgbouncer=true&connect_timeout=15
-```
+```env
+# Resend API Key (erforderlich)
+RESEND_API_KEY=re_your_resend_api_key_here
 
-#### **NEON_HTTP_URL** (für @neondatabase/serverless ohne Pooler):
-```
-postgresql://neondb_owner:DEIN_NEUES_PASSWORT@ep-lucky-river-ag110etn.eu-central-1.aws.neon.tech/neondb?sslmode=require
-```
+# E-Mail Absender (MUSS @updates.abdullahu-drive.de verwenden)
+CONTACT_FROM=Kontaktformular <noreply@updates.abdullahu-drive.de>
 
-### 2. Wichtige Hinweise:
-- ❌ **KEIN** `channel_binding=require` Parameter
-- ✅ **Passwort rotieren** (war öffentlich gepostet)
-- ✅ **Beide URLs** für **Production + Preview + Development** setzen
-- ✅ **Re-Deploy** nach Änderung der ENV-Variablen
+# E-Mail Empfänger
+CONTACT_TO=info@abdullahu-drive.de
 
-## 🚀 Build-Command aktualisieren
-
-### Vercel Dashboard → Project → Settings → Build & Development Settings
-
-**Build Command:** `npm run vercel-build`
-
-**Install Command:** `npm install`
-
-## 🧪 Health-Checks testen
-
-Nach dem Re-Deploy:
-
-### 1. Neon HTTP Driver:
-```
-GET /api/health/db
-```
-**Erwartung:** `{ ok: true, driver: "@neondatabase/serverless" }`
-
-### 2. Prisma Driver:
-```
-GET /api/health/prisma
-```
-**Erwartung:** `{ ok: true, driver: "prisma" }`
-
-### 3. API-Test:
-```
-GET /api/test-apis
-```
-**Erwartung:** Beide APIs funktionieren
-
-## 🔍 Funktionstest (End-to-End)
-
-1. **Re-Deploy** nach ENV-Update
-2. **Health-Checks** prüfen
-3. **Kontaktformular** ausfüllen und absenden
-4. **Vercel Logs** prüfen (Status 201 suchen)
-5. **Dispositionstool** prüfen (Auftrag sollte erscheinen)
-
-## 📊 Erwartete Ergebnisse
-
-### ✅ Erfolgreich:
-- **Health-Checks:** Beide `{ ok: true }`
-- **Kontaktformular:** Erfolgsmeldung
-- **Dispositionstool:** Auftrag erscheint
-- **Vercel Logs:** Keine Fehler
-
-### ❌ Bei Problemen:
-- **Health-Check fehlschlägt:** ENV-Variable falsch
-- **Migration-Fehler:** Build-Command nicht gesetzt
-- **Formular-Fehler:** Prisma/Neon-Verbindung kaputt
-
-## 🛠️ Debugging
-
-### 1. Vercel Function Logs prüfen:
-- Vercel Dashboard → Functions → Logs
-- Nach `[prisma_health_` oder `[health_` suchen
-
-### 2. Browser-Konsole prüfen:
-- F12 → Console
-- Nach `Using neon API` oder `Using prisma API` suchen
-
-### 3. SQL-Checks in Neon:
-```sql
--- Prüfe Tabellen
-SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
-
--- Prüfe Orders
-SELECT id, status, created_at FROM "Order" ORDER BY id DESC LIMIT 5;
-
--- Prüfe Sequences
-SELECT * FROM order_numbers ORDER BY id DESC LIMIT 5;
-SELECT * FROM invoice_numbers ORDER BY id DESC LIMIT 5;
+# Optional: Neon Database
+DATABASE_URL=postgresql://username:password@hostname/database?sslmode=require
 ```
 
-## 🎯 Nächste Schritte
+## ✅ Verifizierte Domain
 
-1. **Passwort in Neon rotieren**
-2. **Zwei ENV-Variablen in Vercel setzen**
-3. **Build-Command auf `npm run vercel-build` ändern**
-4. **Re-Deploy auslösen**
-5. **Health-Checks testen**
-6. **Kontaktformular testen**
+- **Subdomain:** `updates.abdullahu-drive.de` ✅ **VERIFIZIERT**
+- **Hauptdomain:** `abdullahu-drive.de` ❌ **NICHT VERIFIZIERT**
 
-**Das Problem sollte damit vollständig gelöst sein!** 🎉
+## 🔧 Automatische Sicherheitschecks
 
----
+Der Code prüft automatisch, dass nur verifizierte Domains verwendet werden:
 
-**Letzte Aktualisierung:** $(date)
-**Status:** ✅ Implementiert, bereit für Vercel-Setup
+```javascript
+// Sicherheitscheck für verifizierte Domain
+if (!/@updates\.abdullahu-drive\.de>?$/.test(from)) {
+  throw new Error('FROM muss @updates.abdullahu-drive.de sein');
+}
+```
+
+## 🚀 Deployment-Schritte
+
+1. **Environment Variables setzen** in Vercel Dashboard
+2. **Redeploy** der Anwendung
+3. **Testen** mit Kontaktformular
+4. **E-Mails prüfen** im Postfach
+
+## 🧪 Testing
+
+### Lokaler Test:
+```bash
+curl -X POST http://localhost:3000/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test User",
+    "email": "test@example.com",
+    "message": "Test message"
+  }'
+```
+
+### Erwartete E-Mail:
+```
+Von: Kontaktformular <noreply@updates.abdullahu-drive.de>
+An: info@abdullahu-drive.de
+Betreff: Neue Angebotsanfrage von Test User
+```
+
+## ❌ Häufige Fehler
+
+### 1. Falsche Domain:
+```
+❌ from: "noreply@abdullahu-drive.de"  // Nicht verifiziert
+✅ from: "noreply@updates.abdullahu-drive.de"  // Verifiziert
+```
+
+### 2. Fehlende Environment Variables:
+```
+❌ RESEND_API_KEY fehlt
+✅ RESEND_API_KEY=re_...
+```
+
+### 3. Domain nicht verifiziert:
+```
+❌ The abdullahu-drive.de domain is not verified
+✅ updates.abdullahu-drive.de ist verifiziert
+```
+
+## 📋 Checkliste
+
+- [ ] `RESEND_API_KEY` gesetzt
+- [ ] `CONTACT_FROM` mit `@updates.abdullahu-drive.de`
+- [ ] `CONTACT_TO` mit gewünschter E-Mail
+- [ ] Domain `updates.abdullahu-drive.de` in Resend verifiziert
+- [ ] Anwendung redeployed
+- [ ] E-Mail-Test erfolgreich
+
+## 🔍 Debugging
+
+### Console-Logs prüfen:
+```javascript
+// Erfolgreich
+[email] E-Mail erfolgreich gesendet: { to: "info@abdullahu-drive.de", subject: "..." }
+
+// Fehler
+[email] FROM muss @updates.abdullahu-drive.de sein: noreply@abdullahu-drive.de
+[email] RESEND_API_KEY fehlt – Mail wird übersprungen
+```
+
+### Vercel Logs:
+```bash
+vercel logs --follow
+```
+
+## 🎯 Ergebnis
+
+Nach korrekter Konfiguration:
+- ✅ E-Mails werden von `@updates.abdullahu-drive.de` gesendet
+- ✅ Automatische Sicherheitschecks verhindern falsche Domains
+- ✅ Zuverlässige E-Mail-Zustellung über Resend
+- ✅ Keine Domain-Verifizierungsfehler mehr
