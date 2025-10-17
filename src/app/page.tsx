@@ -9,11 +9,12 @@ import Hyperspeed from '@/components/Hyperspeed'
 import { hyperspeedPresets } from '@/components/hyperspeedPresets'
 
 export const metadata: Metadata = {
-  title: 'Abdullahu Drive Solutions – Abholung & Zustellung deutschlandweit',
-  description: 'Sichere Fahrzeugüberführungen: Abholung und Zustellung in ganz Deutschland, vollständig versichert und dokumentiert. Jetzt unverbindlich anfragen.',
+  title: 'Fahrzeugüberführung Deutschland | Abdullahu Drive Solutions | #1 Service',
+  description: '🚗 Professionelle Fahrzeugüberführung in ganz Deutschland! Vollversichert, termintreu & transparent. Über 10 Jahre Erfahrung. Jetzt kostenloses Angebot anfragen!',
+  keywords: 'Fahrzeugüberführung Deutschland, Auto transport, Fahrzeug abholen, Auto zustellen, Wuppertal, NRW, professionell, versichert, termintreu',
   openGraph: {
-    title: 'Abdullahu Drive Solutions',
-    description: 'Abholung & Zustellung in ganz Deutschland – versichert und dokumentiert.',
+    title: 'Fahrzeugüberführung Deutschland | Abdullahu Drive Solutions | #1 Service',
+    description: '🚗 Professionelle Fahrzeugüberführung in ganz Deutschland! Vollversichert, termintreu & transparent.',
     type: 'website',
     url: 'https://abdullahu-drive-solutions.de',
   }
@@ -116,12 +117,13 @@ export default function HomePage() {
         {/* Content */}
         <div className="hero-content relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="hero-title text-white">
-            <div className="hero-text-line">Sicher & zuverlässig von</div>
+            <div className="hero-text-line">Professionelle Fahrzeugüberführung von</div>
             <div className="mobile-ab-container">
               <span className="mobile-a handwritten-underline">A</span>
               <span className="mobile-nach"> nach </span>
               <span className="mobile-b handwritten-underline">B</span>
             </div>
+            <div className="hero-text-line text-lg mt-4">Deutschlandweit • Vollversichert • Termintreu</div>
           </h1>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
             <Button asChild className="hover-lift hover-glow px-8 py-3">

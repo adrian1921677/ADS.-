@@ -1,5 +1,15 @@
 User-agent: *
 Allow: /
 Disallow: /disposition
+Disallow: /api/
+Disallow: /_next/
+Disallow: /out/
 
+# Crawl-delay for better server performance
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://abdullahu-drive-solutions.de/sitemap.xml
+
+# Additional sitemaps for better indexing
 Sitemap: https://abdullahu-drive-solutions.de/sitemap.xml
