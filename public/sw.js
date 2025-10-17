@@ -1,6 +1,6 @@
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open('ads-v1').then((cache) => cache.addAll(['/offline']))
+    caches.open('ads-v2').then((cache) => cache.addAll(['/offline']))
   )
   self.skipWaiting()
 })

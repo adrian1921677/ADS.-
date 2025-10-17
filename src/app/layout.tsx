@@ -59,9 +59,8 @@ export const metadata: Metadata = {
     'google-site-verification': 'your-google-verification-code',
   },
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/logo.png',
+    icon: '/icon.png',
+    apple: '/icon.png',
   },
 }
 
@@ -73,12 +72,6 @@ export default function RootLayout({
   return (
     <html lang="de">
       <head>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" href="/logo.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/logo.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/logo.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/logo.png" />
-        <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#0C2A3A" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
