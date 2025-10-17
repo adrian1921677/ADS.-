@@ -27,7 +27,7 @@ interface Colors {
   sticks: number;
 }
 
-interface HyperspeedOptions {
+export interface HyperspeedOptions {
   onSpeedUp?: (ev: MouseEvent | TouchEvent) => void;
   onSlowDown?: (ev: MouseEvent | TouchEvent) => void;
   distortion?: string | Distortion;
@@ -1215,10 +1215,6 @@ class App {
 }
 
 const Hyperspeed: FC<HyperspeedProps> = ({ effectOptions = {} }) => {
-  const mergedOptions: HyperspeedOptions = {
-    ...defaultOptions,
-    ...effectOptions
-  };
   const hyperspeed = useRef<HTMLDivElement>(null);
   const appRef = useRef<App | null>(null);
 
@@ -1236,6 +1232,11 @@ const Hyperspeed: FC<HyperspeedProps> = ({ effectOptions = {} }) => {
     const container = hyperspeed.current;
     if (!container) return;
 
+    const mergedOptions: HyperspeedOptions = {
+      ...defaultOptions,
+      ...effectOptions
+    };
+
     const options = { ...mergedOptions };
     if (typeof options.distortion === 'string') {
       options.distortion = distortions[options.distortion];
@@ -1250,7 +1251,7 @@ const Hyperspeed: FC<HyperspeedProps> = ({ effectOptions = {} }) => {
         appRef.current.dispose();
       }
     };
-  }, [mergedOptions]);
+  }, [effectOptions]);
 
   return <div id="lights" ref={hyperspeed}></div>;
 };

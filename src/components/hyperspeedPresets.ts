@@ -1,7 +1,7 @@
+import type { HyperspeedOptions } from './Hyperspeed';
+
 export const hyperspeedPresets = {
   one: {
-    onSpeedUp: () => {},
-    onSlowDown: () => {},
     distortion: 'turbulentDistortion',
     length: 400,
     roadWidth: 10,
@@ -16,15 +16,15 @@ export const hyperspeedPresets = {
     shoulderLinesWidthPercentage: 0.05,
     brokenLinesWidthPercentage: 0.1,
     brokenLinesLengthPercentage: 0.5,
-    lightStickWidth: [0.12, 0.5],
-    lightStickHeight: [1.3, 1.7],
-    movingAwaySpeed: [60, 80],
-    movingCloserSpeed: [-120, -160],
-    carLightsLength: [400 * 0.03, 400 * 0.2],
-    carLightsRadius: [0.05, 0.14],
-    carWidthPercentage: [0.3, 0.5],
-    carShiftX: [-0.8, 0.8],
-    carFloorSeparation: [0, 5],
+    lightStickWidth: [0.12, 0.5] as [number, number],
+    lightStickHeight: [1.3, 1.7] as [number, number],
+    movingAwaySpeed: [60, 80] as [number, number],
+    movingCloserSpeed: [-120, -160] as [number, number],
+    carLightsLength: [400 * 0.03, 400 * 0.2] as [number, number],
+    carLightsRadius: [0.05, 0.14] as [number, number],
+    carWidthPercentage: [0.3, 0.5] as [number, number],
+    carShiftX: [-0.8, 0.8] as [number, number],
+    carFloorSeparation: [0, 5] as [number, number],
     colors: {
       roadColor: 0x080808,
       islandColor: 0x0a0a0a,
@@ -37,8 +37,6 @@ export const hyperspeedPresets = {
     }
   },
   two: {
-    onSpeedUp: () => {},
-    onSlowDown: () => {},
     distortion: 'mountainDistortion',
     length: 400,
     roadWidth: 9,
@@ -53,16 +51,15 @@ export const hyperspeedPresets = {
     shoulderLinesWidthPercentage: 0.05,
     brokenLinesWidthPercentage: 0.1,
     brokenLinesLengthPercentage: 0.5,
-    lightStickWidth: [0.12, 0.5],
-    lightStickHeight: [1.3, 1.7],
-
-    movingAwaySpeed: [60, 80],
-    movingCloserSpeed: [-120, -160],
-    carLightsLength: [400 * 0.05, 400 * 0.15],
-    carLightsRadius: [0.05, 0.14],
-    carWidthPercentage: [0.3, 0.5],
-    carShiftX: [-0.2, 0.2],
-    carFloorSeparation: [0.05, 1],
+    lightStickWidth: [0.12, 0.5] as [number, number],
+    lightStickHeight: [1.3, 1.7] as [number, number],
+    movingAwaySpeed: [60, 80] as [number, number],
+    movingCloserSpeed: [-120, -160] as [number, number],
+    carLightsLength: [400 * 0.05, 400 * 0.15] as [number, number],
+    carLightsRadius: [0.05, 0.14] as [number, number],
+    carWidthPercentage: [0.3, 0.5] as [number, number],
+    carShiftX: [-0.2, 0.2] as [number, number],
+    carFloorSeparation: [0.05, 1] as [number, number],
     colors: {
       roadColor: 0x080808,
       islandColor: 0x0a0a0a,
@@ -75,8 +72,6 @@ export const hyperspeedPresets = {
     }
   },
   three: {
-    onSpeedUp: () => {},
-    onSlowDown: () => {},
     distortion: 'xyDistortion',
     length: 400,
     roadWidth: 9,
@@ -112,8 +107,6 @@ export const hyperspeedPresets = {
     }
   },
   four: {
-    onSpeedUp: () => {},
-    onSlowDown: () => {},
     distortion: 'LongRaceDistortion',
     length: 400,
     roadWidth: 10,
@@ -149,8 +142,6 @@ export const hyperspeedPresets = {
     }
   },
   five: {
-    onSpeedUp: () => {},
-    onSlowDown: () => {},
     distortion: 'turbulentDistortion',
     length: 400,
     roadWidth: 9,
@@ -186,8 +177,6 @@ export const hyperspeedPresets = {
     }
   },
   six: {
-    onSpeedUp: () => {},
-    onSlowDown: () => {},
     distortion: 'deepDistortion',
     length: 400,
     roadWidth: 18,
@@ -222,4 +211,4 @@ export const hyperspeedPresets = {
       sticks: 0xfdfdf0
     }
   }
-};
+} satisfies Record<string, Partial<HyperspeedOptions>>;
