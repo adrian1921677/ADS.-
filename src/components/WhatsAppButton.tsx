@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { MessageCircle, Phone } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
 
 interface WhatsAppButtonProps {
   phoneNumber: string
