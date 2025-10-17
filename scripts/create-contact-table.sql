@@ -10,3 +10,4 @@ CREATE TABLE IF NOT EXISTS contact_requests (
 -- Index für bessere Performance bei Abfragen
 CREATE INDEX IF NOT EXISTS idx_contact_requests_created_at ON contact_requests(created_at);
 CREATE INDEX IF NOT EXISTS idx_contact_requests_email ON contact_requests(email);
+

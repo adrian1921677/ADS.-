@@ -101,3 +101,4 @@ curl -X POST http://localhost:3000/api/contact \
 ### Build-Fehler:
 - Alle Dependencies installiert: `npm install`
 - TypeScript-Fehler beheben: `npm run build`
+

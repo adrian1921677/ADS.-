@@ -145,3 +145,4 @@ Betreff: Neue Überführungs-Anfrage ADS-2024-001
 - **Domain-Verifizierung prüfen** (jährlich)
 - **E-Mail-Templates anpassen** (bei Design-Änderungen)
 - **Logs überwachen** (für Fehlerbehandlung)
+

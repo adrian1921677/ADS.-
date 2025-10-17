@@ -5,6 +5,7 @@ import { Footer } from '@/components/footer'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Phone, Mail, MapPin, Clock, CheckCircle } from 'lucide-react'
 import ContactForm from '@/components/ContactForm'
+import WhatsAppButton from '@/components/WhatsAppButton'
 
 export default function KontaktPage() {
   const contactInfo = [
@@ -65,6 +66,12 @@ export default function KontaktPage() {
 
           {/* Contact Information */}
           <div className="space-y-6">
+            {/* WhatsApp Card */}
+            <WhatsAppButton 
+              phoneNumber="+49 160 4245116"
+              message="Hallo! Ich interessiere mich für Ihre Fahrzeugtransport-Services. Können Sie mir ein Angebot machen?"
+            />
+
             {contactInfo.map((info, index) => (
               <Card key={index}>
                 <CardContent className="pt-6">

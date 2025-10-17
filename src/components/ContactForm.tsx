@@ -204,16 +204,16 @@ export default function ContactForm() {
         <input name="website" tabIndex={-1} autoComplete="off" className="hidden" />
 
         {/* Submit Button */}
-        <div className="pt-4">
+        <div className="pt-6">
           <Button
             type="submit"
             size="lg"
-            className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 shadow-lg hover:shadow-xl transition-all duration-200"
+            className="w-full transform hover:scale-105 active:scale-95"
             disabled={state === "sending"}
           >
             {state === "sending" ? (
               <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                <Loader2 className="mr-2 h-6 w-6 animate-spin" />
                 Angebot wird angefordert...
               </>
             ) : (
