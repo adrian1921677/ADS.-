@@ -5,7 +5,14 @@ import { neon } from "@neondatabase/serverless";
 const schema = z.object({
   name: z.string().min(1, "Name fehlt"),
   email: z.string().email("E-Mail ungültig"),
-  message: z.string().min(10, "Nachricht zu kurz").max(5000, "Nachricht zu lang"),
+  phone: z.string().min(1, "Telefon fehlt"),
+  pickupLocation: z.string().min(1, "Abholort fehlt"),
+  destination: z.string().min(1, "Zielort fehlt"),
+  vehicleType: z.string().optional(),
+  readyToDrive: z.string().optional(),
+  preferredDate: z.string().optional(),
+  message: z.string().optional(),
+  gdprConsent: z.boolean().refine(val => val === true, "Datenschutzerklärung muss akzeptiert werden"),
   // optional: honeypot
   website: z.string().optional(),
 });
@@ -45,14 +52,30 @@ export async function POST(req: Request) {
     const res = await resend.emails.send({
       from: "Abdullahu Drive Solutions <noreply@abdullahu-drive.de>", // Domain in Resend verifizieren
       to,
-      subject: `Neue Anfrage von ${data.name}`,
+      subject: `Neue Angebotsanfrage von ${data.name}`,
       replyTo: data.email,
       text: [
+        `=== NEUE ANGEBOTSANFRAGE ===`,
+        ``,
+        `PERSÖNLICHE DATEN:`,
         `Name: ${data.name}`,
         `E-Mail: ${data.email}`,
+        `Telefon: ${data.phone}`,
         ``,
-        `Nachricht:`,
-        data.message,
+        `TRANSPORTDATEN:`,
+        `Abholort: ${data.pickupLocation}`,
+        `Zielort: ${data.destination}`,
+        `Fahrzeugtyp: ${data.vehicleType || 'Nicht angegeben'}`,
+        `Fahrbereit: ${data.readyToDrive || 'Nicht angegeben'}`,
+        ``,
+        `TERMIN:`,
+        `Wunschtermin: ${data.preferredDate || 'Nicht angegeben'}`,
+        ``,
+        `NACHRICHT:`,
+        data.message || 'Keine zusätzlichen Hinweise',
+        ``,
+        `---`,
+        `Diese Anfrage wurde über das Kontaktformular auf abdullahu-drive-solutions.de gesendet.`
       ].join("\n"),
     });
 
