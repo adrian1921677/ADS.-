@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata: Metadata = {
   title: 'Fahrzeugüberführung Deutschland | Abdullahu Drive Solutions | #1 Service',
@@ -149,6 +150,7 @@ export default function RootLayout({
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 bg-white text-navy-600 px-4 py-2 rounded">Zum Inhalt springen</a>
         <script dangerouslySetInnerHTML={{ __html: `if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{})})}` }} />
         <GoogleAnalytics measurementId="G-R7VFWEVBPQ" />
+        <SpeedInsights />
         {children}
       </body>
     </html>
